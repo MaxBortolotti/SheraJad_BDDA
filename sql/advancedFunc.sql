@@ -38,8 +38,43 @@ CREATE INDEX index_rating_average on rating(bayesaverage);
 
 --TRIGGERS
 
+--trigger qui calcul nbr d'avis d'un jeu
 DELIMITER $$
-CREATE TRIGGER 
+CREATE TRIGGER increment_user_rating
+AFTER INSERT ON review
+FOR EACH ROW
+BEGIN
+    UPDATE rating
+    SET usersrated = usersrated + 1
+    WHERE id = NEW.idRa;
+END$$
+DELIMITER;
 
+--trigger qui calcul la moyenne du rating 
+DELIMITER $$
+CREATE TRIGGER calculate_average_rating
+AFTER INSERT ON review
+FOR EACH ROW
+BEGIN 
+    DECLARE avg_rating DECIMAL(5,3);
+    SELECT AVG(userrating) INTO avg_rating
+    FROM review
+    WHERE idRa = NEW.idRa;
+    UPDATE rating
+    SET average = avg_rating
+    WHERE id = NEW.idRa;
+END$$
+DELIMITER;
+
+--trigger qui enlève une review
+DELIMITER $$
+CREATE TRIGGER delete_review
+AFTER DELETE ON review
+FOR EACH ROW
+BEGIN  
+    UPDATE rating
+    SET usersrated = usersrated - 1
+    WHERE id = OLD.idRa;
+END$$
 DELIMITER;
 
