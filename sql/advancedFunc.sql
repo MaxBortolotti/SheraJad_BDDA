@@ -38,7 +38,7 @@ CREATE INDEX index_rating_average on rating(bayesaverage);
 
 --TRIGGERS
 
---trigger qui calcul nbr d'avis d'un jeu
+--trigger qui calcul nbr d'avis d'un jeu + 1
 DELIMITER $$
 CREATE TRIGGER increment_user_rating
 AFTER INSERT ON review
