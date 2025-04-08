@@ -24,7 +24,7 @@ CREATE TABLE category(
 
 CREATE TABLE mechanic(
    id INT,
-   name VARCHAR(50)  NOT NULL,
+   name VARCHAR(50) NOT NULL,
    PRIMARY KEY(id)
 );
 
