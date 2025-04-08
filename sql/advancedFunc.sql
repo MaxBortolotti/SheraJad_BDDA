@@ -70,7 +70,6 @@ BEGIN
     #Puis, on calcule la nouvelle moyenne a partir de ces variables selectionnees
     SELECT ((avg_rating + user_rating)/(total_usersrated+1)) INTO final_avg_rating;
     UPDATE review SET review.average = final_avg_rating WHERE review.id = NEW.id;
-    #PENSER A INCREMENTER ENSUITE ET A SUPPRIMER LE TRIGGER D'AVANT(increment_user_rating)
     #Enfin, on incremente le nombre total d'avis du jeu
     UPDATE rating SET rating.usersrated = rating.usersrated + 1 WHERE rating.id = NEW.idRa;
     
