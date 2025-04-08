@@ -111,3 +111,4 @@ CREATE TABLE connGP(
    FOREIGN KEY(idP) REFERENCES person(id)
 );
 
+
