@@ -57,8 +57,8 @@ CREATE TABLE review(
 CREATE TABLE users(
    id INT,
    email VARCHAR(50) ,
-   password VARCHAR(50) ,
-   creationdate DATE,
+   password VARCHAR(255) ,
+   creationdate VARCHAR(255),
    idP INT NOT NULL,
    PRIMARY KEY(id),
    UNIQUE(idP),

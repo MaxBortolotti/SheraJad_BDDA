@@ -102,3 +102,31 @@ BEGIN
 END$$
 DELIMITER ;
 
+
+# FONCTIONS
+
+USE SHERAJAD;
+# fonction qui permet de vérifier si le mot de passe de l'utilisateur est bon
+DROP FUNCTION check_user_password;
+DELIMITER //
+CREATE FUNCTION check_user_password(Iemail VARCHAR(50), Ipassword VARCHAR(50)) RETURNS BOOL
+DETERMINISTIC
+BEGIN
+	DECLARE password_is_correct BOOL;
+    DECLARE nbr_response INT;
+    SET password_is_correct = 0;
+	SELECT COUNT(*) INTO nbr_response FROM users
+		WHERE users.email = Iemail AND users.password COLLATE utf8mb4_general_ci  = sha2(concat(users.creationdate, Ipassword), 224);
+	IF nbr_response = 1 THEN
+		SET password_is_correct = 1;
+	END IF;
+	
+    RETURN password_is_correct;
+END //
+DELIMITER ;
+
+SELECT check_user_password('user@example.com','user');
+
+
+
+# Fonction qui compte le nombre total de jeux de la BDD

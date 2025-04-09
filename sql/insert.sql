@@ -109,7 +109,6 @@ INSERT IGNORE INTO connGM (idG, idM) VALUES
 (15, 13), (15, 3);
 
 
-
 INSERT IGNORE INTO person (id, firstname, lastname) VALUES
 (1, 'Jacob', 'Fryxelius'),
 (2, 'Isaac', 'Fryxelius'),
@@ -143,7 +142,7 @@ INSERT IGNORE INTO person (id, firstname, lastname) VALUES
 (30, 'Cyrille', 'Daujean'),
 (31, 'Matt', 'Leacock'),
 (32, 'Volkan', 'Baga'),
-(33, 'Tanja', 'Donner'),
+(33, 'Jean-Aymeric', 'Diet'),
 (34, 'Dennis', 'Lohausen'),
 (35, 'Donald X.', 'Vaccarino'),
 (36, 'Matthias', 'Catrein'),
@@ -182,6 +181,11 @@ INSERT IGNORE INTO review (id, userrating, message, idRa, idP) VALUES
 (10, 9.0, 'Very immersive gameplay.', 10, 10),
 (11, 1.5, 'Very bad game.', 5, 7);
 
+INSERT IGNORE INTO users (email, password, creationdate, idP) VALUES ("user@example.com", SHA2(CONCAT(NOW(), "user"), 224), NOW(), 33);
+
+DELETE FROM users WHERE idP = 33;
+SELECT * FROM users;
+
 /*
 SELECT * FROM game;
 SELECT * FROM category;
@@ -197,3 +201,5 @@ SELECT * FROM connGP;
 #SELECT game.id, game.name, game.idRa, rating.id, rating.average, rating.bayesaverage, rating.usersrated FROM game JOIN rating ON game.idRa = rating.id;
 
 #SELECT * FROM rating JOIN review ON rating.id = review.idRa;
+
+#SELECT * FROM person WHERE person.id = 33;
