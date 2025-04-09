@@ -23,7 +23,7 @@ FROM game WHERE minplayers >= 4 AND maxplayers >= 4;
 
 -- CREATION DES INDEX
 
-#suppression des anciens indexes pour les redéfinir plus bas
+-- suppression des anciens indexes pour les redéfinir plus bas
 DROP INDEX index_playing_time ON game;
 DROP INDEX index_min_playing_time ON game;
 DROP INDEX index_max_playing_time ON game;
@@ -63,14 +63,14 @@ BEGIN
     DECLARE total_usersrated DECIMAL(5,3);
     DECLARE final_avg_rating DECIMAL(5,3);
     
-    #On selectionne les variables que l'on va utiliser
+    -- On selectionne les variables que l'on va utiliser
     SELECT rating.usersrated INTO total_usersrated FROM rating WHERE rating.id = NEW.idRa;
     SELECT review.userrating INTO user_rating FROM review WHERE review.id = NEW.id;
     SELECT rating.average INTO avg_rating FROM rating WHERE rating.id = NEW.idRa;
-    #Puis, on calcule la nouvelle moyenne a partir de ces variables selectionnees
+    -- Puis, on calcule la nouvelle moyenne a partir de ces variables selectionnees
     SELECT ((avg_rating + user_rating)/(total_usersrated+1)) INTO final_avg_rating;
     UPDATE review SET review.average = final_avg_rating WHERE review.id = NEW.id;
-    #Enfin, on incremente le nombre total d'avis du jeu
+    -- Enfin, on incremente le nombre total d'avis du jeu
     UPDATE rating SET rating.usersrated = rating.usersrated + 1 WHERE rating.id = NEW.idRa;
     
 END$$
@@ -90,7 +90,7 @@ END$$
 DELIMITER ;
 
 
-# trigger qui definit l'annee de publication d'un jeu comme l'annee actuelle si ce nouveu jeu inséré n'a pas de d'annee de publication
+--  trigger qui definit l'annee de publication d'un jeu comme l'annee actuelle si ce nouveu jeu inséré n'a pas de d'annee de publication
 DELIMITER $$
 CREATE TRIGGER default_yearpublished_for_null
 AFTER INSERT ON game
@@ -103,10 +103,10 @@ END$$
 DELIMITER ;
 
 
-# FONCTIONS
+--  FONCTIONS
 
 USE SHERAJAD;
-# fonction qui permet de vérifier si le mot de passe de l'utilisateur est bon
+--  fonction qui permet de vérifier si le mot de passe de l'utilisateur est bon
 DROP FUNCTION check_user_password;
 DELIMITER //
 CREATE FUNCTION check_user_password(Iemail VARCHAR(50), Ipassword VARCHAR(50)) RETURNS BOOL
@@ -129,4 +129,18 @@ SELECT check_user_password('user@example.com','user');
 
 
 
-# Fonction qui compte le nombre total de jeux de la BDD
+--  Fonction qui compte le nombre total de jeux de la BDD
+DROP FUNCTION IF EXISTS count_games;
+DELIMITER //
+CREATE FUNCTION count_games() RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE nbr_games INT;
+    SELECT COUNT(*) INTO nbr_games FROM game;
+    RETURN nbr_games;
+END //
+DELIMITER ;
+
+SELECT count_games();
+
+-- compter le nombre de jeux qu'un user a crée
