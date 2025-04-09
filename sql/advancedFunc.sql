@@ -143,4 +143,15 @@ DELIMITER ;
 
 SELECT count_games();
 
--- compter le nombre de jeux qu'un user a crée
+
+
+-- compter le nombre de jeux qu'un user a cree
+drop procedure get_games_created_by_person
+DELIMITER //
+CREATE PROCEDURE get_games_created_by_person(IN person_id INT)
+BEGIN
+    SELECT game.id, game.name FROM game JOIN conngp ON game.id = conngp.idG WHERE conngp.idP = person_id;
+END //
+DELIMITER ;
+
+CALL get_games_created_by_person(3); 
