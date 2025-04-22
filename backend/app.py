@@ -92,7 +92,7 @@ class ConnGP(db.Model):
 def home():
     return render_template('home.html', message="Bienvenue sur notre site de jeux!")
 
-@app.route('/games', methods=['GET'])
+@app.route('/search-games', methods=['GET'])
 def get_games():
     sort_by = request.args.get('sort_by', 'name')
     if sort_by == 'name':
@@ -101,7 +101,11 @@ def get_games():
         games = Game.query.order_by(Game.yearpublished).all()
     else:
         games = Game.query.all()
-    return render_template('games.html', games=games)
+    return render_template('search-games.html', games=games)
+
+@app.route('/auth')
+def auth_func():
+    return render_template('auth.html')
 
 # --- MAIN ---
 
