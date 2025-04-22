@@ -2,7 +2,7 @@ from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-app = Flask(__name__, template_folder='../templates')
+app = Flask(__name__, template_folder='../templates', static_folder='../static')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/sherajad'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -106,6 +106,7 @@ def get_games():
 @app.route('/auth')
 def auth_func():
     return render_template('auth.html')
+
 
 # --- MAIN ---
 
