@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sherajad - Liste des jeux</title>
+</head>
+
+<body>
+
+    <!-- Barre de navigation -->
+    <nav>
+        <img class="nav-img" src="{{ url_for('static', filename='images/LOGO.png') }}" alt="Sherajad-Logo" />
+        <a href="/">Accueil</a>
+        <a href="/search-games">Jeux</a>
+        <a href="/auth">Connexion</a>
+    </nav>
+
+    <h1>Liste des jeux</h1>
+
+    <form method="GET" action="/search-games">
+        <label for="sort_by">Trier par :</label>
+        <select name="sort_by" id="sort_by" onchange="this.form.submit()">
+            <option value="name" {% if request.args.get('sort_by')=='name' %}selected{% endif %}>Nom</option>
+            <option value="yearpublished" {% if request.args.get('sort_by')=='yearpublished' %}selected{% endif %}>Année
+                de publication</option>
+        </select>
+    </form>
+
+    <ul>
+        {% for game in games %}
+        <li>{{ game.name }} ({{ game.yearpublished }})</li>
+        {% endfor %}
+    </ul>
+
+    <a href="/">Retour à l'accueil</a>
+
+</body>
+
+</html>
+
+
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    nav {
+        overflow: hidden;
+        background-color: #333;
+        display: flex;
+        justify-content: space-between;
+        padding-left: 30%;
+        padding-right: 30%;
+    }
+
+    nav a {
+        float: left;
+        color: #f2f2f2;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 17px;
+        display: flex;
+        align-items: center;
+    }
+
+    nav a:hover {
+        background-color: #fd963f;
+        color: black;
+    }
+
+    nav a.active {
+        background-color: #04AA6D;
+        color: white;
+    }
+
+    .nav-img {
+        height: 80px;
+        display: flex
+    }
+</style>
