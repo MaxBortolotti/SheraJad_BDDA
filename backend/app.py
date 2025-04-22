@@ -2,7 +2,8 @@ from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='../templates')
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/sherajad'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -23,7 +24,7 @@ class Rating(db.Model):
     __tablename__ = 'rating'
     id = db.Column(db.Integer, primary_key=True)
     average = db.Column(db.Float)
-    bayesaverage = db.Column(db.Float)
+    bayesaverage = db.Column(db.Float)  
     usersrated = db.Column(db.Integer)
     games = db.relationship('Game', backref='rating', lazy=True)
     reviews = db.relationship('Review', backref='rating', lazy=True)
@@ -100,7 +101,7 @@ def get_games():
         games = Game.query.order_by(Game.yearpublished).all()
     else:
         games = Game.query.all()
-    return render_template('./html/games.html', games=games)
+    return render_template('games.html', games=games)
 
 # --- MAIN ---
 
