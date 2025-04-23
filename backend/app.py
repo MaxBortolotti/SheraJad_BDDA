@@ -73,6 +73,7 @@ class Game(db.Model):
 
     categories = db.relationship('Category', secondary='conngc', backref=db.backref('games', lazy='dynamic'))
     mechanics = db.relationship('Mechanic', secondary='conngm', backref=db.backref('games', lazy='dynamic'))
+    ratings = db.relationship('Rating', backref='game', lazy=True)
 
 
 class ConnGC(db.Model):
