@@ -71,6 +71,10 @@ class Game(db.Model):
     wishing = db.Column(db.Integer)
     idRa = db.Column(db.Integer, db.ForeignKey('rating.id'), unique=True, nullable=False)
 
+    categories = db.relationship('Category', secondary='conngc', backref=db.backref('games', lazy='dynamic'))
+    mechanics = db.relationship('Mechanic', secondary='conngm', backref=db.backref('games', lazy='dynamic'))
+
+
 class ConnGC(db.Model):
     __tablename__ = 'conngc'
     idG = db.Column(db.Integer, db.ForeignKey('game.id'), primary_key=True)
@@ -85,6 +89,8 @@ class ConnGP(db.Model):
     __tablename__ = 'conngp'
     idG = db.Column(db.Integer, db.ForeignKey('game.id'), primary_key=True)
     idP = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True)
+
+
 
 # --- ROUTES ---
 
@@ -106,6 +112,12 @@ def get_games():
 @app.route('/auth')
 def auth_func():
     return render_template('auth.html')
+
+@app.route('/game/<int:game_id>')
+def game_detail(game_id):
+    game = Game.query.get_or_404(game_id)
+    return render_template('game-detail.html', game=game)
+
 
 
 # --- MAIN ---
