@@ -16,9 +16,11 @@
         <a href="/auth">Connexion</a>
     </nav>
 
-    <h1>Accueil</h1>
-    <p>{{ message }}</p>
-    <a href="/search-games">Voir la liste des jeux</a>
+    <div class="main-text">
+        <h1>Accueil</h1>
+        <p>{{ message }}</p>
+        <a href="/search-games">Voir la liste des jeux</a>
+    </div>
 
 </body>
 
@@ -64,5 +66,9 @@
     .nav-img {
         height: 80px;
         display: flex
+    }
+
+    .main-text {
+        padding-left: 10%;
     }
 </style>
