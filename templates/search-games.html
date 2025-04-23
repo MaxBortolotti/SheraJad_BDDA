@@ -27,14 +27,16 @@
                 <option value="yearpublished" {% if request.args.get('sort_by')=='yearpublished' %}selected{% endif %}>
                     Année
                     de publication</option>
+                <option value="average" {% if request.args.get('sort_by')=='average' %}selected{% endif %}>
+                    Note utilisateurs</option>
             </select>
         </form>
 
         <ul>
             {% for game in games %}
             <li>
-                <a class="clickable-game" href="{{ url_for('game_detail', game_id=game.id) }}">{{ game.name }} ({{
-                    game.yearpublished }})</a>
+                <a class="clickable-game" href="{{ url_for('game_detail', game_id=game.id) }}"><strong>{{ game.name
+                        }}</strong> ({{ game.yearpublished }}) [{{ game.ratings.average }}]</a>
             </li>
             {% endfor %}
         </ul>
