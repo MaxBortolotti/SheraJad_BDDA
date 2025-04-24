@@ -74,6 +74,7 @@ class Game(db.Model):
 
     categories = db.relationship('Category', secondary='conngc', backref=db.backref('games', lazy='dynamic'))
     mechanics = db.relationship('Mechanic', secondary='conngm', backref=db.backref('games', lazy='dynamic'))
+    ratings = db.relationship('Rating', backref='game', lazy=True)
 
 
 class ConnGC(db.Model):
@@ -110,6 +111,8 @@ def get_games():
         games = Game.query.order_by(Game.name).all()
     elif sort_by == 'yearpublished':
         games = Game.query.order_by(Game.yearpublished).all()
+    elif sort_by == 'average':
+        games = Game.query.join(Rating).order_by(Rating.average.desc()).all()
     else:
         games = Game.query.all()
     return render_template('search-games.html', games=games)

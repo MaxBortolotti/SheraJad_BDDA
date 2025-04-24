@@ -16,29 +16,33 @@
         <a href="/auth">Connexion</a>
     </nav>
 
-    <h1>Détails du jeu : {{ game.name }}</h1>
+    <div class="main-text">
+        <h1>Détails du jeu : {{ game.name }}</h1>
 
-    <p><strong>Description :</strong> {{ game.description }}</p>
-    <p><strong>Année de publication :</strong> {{ game.yearpublished }}</p>
-    <p><strong>Nombre de joueurs :</strong> {{ game.minplayers }} - {{ game.maxplayers }}</p>
-    <p><strong>Temps de jeu :</strong> {{ game.minplaytime }} - {{ game.maxplaytime }} minutes</p>
-    <p><strong>Âge minimum :</strong> {{ game.minage }}</p>
-    <p><strong>Catégories :</strong>
-    <ul>
-        {% for category in game.categories %}
-        <li>{{ category.name }}</li>
-        {% endfor %}
-    </ul>
-    </p>
-    <p><strong>Mécaniques :</strong>
-    <ul>
-        {% for mechanic in game.mechanics %}
-        <li>{{ mechanic.name }}</li>
-        {% endfor %}
-    </ul>
-    </p>
+        <p><strong>Description :</strong> {{ game.description }}</p>
+        <p><strong>Année de publication :</strong> {{ game.yearpublished }}</p>
+        <p><strong>Nombre de joueurs :</strong> {{ game.minplayers }} - {{ game.maxplayers }}</p>
+        <p><strong>Temps de jeu :</strong> {{ game.minplaytime }} - {{ game.maxplaytime }} minutes</p>
+        <p><strong>Âge minimum :</strong> {{ game.minage }}</p>
+        <p><strong>Note des utilisateurs :</strong> {{ game.ratings.average }}</p>
+        <p><strong>Catégories :</strong>
+        <ul>
+            {% for category in game.categories %}
+            <li>{{ category.name }}</li>
+            {% endfor %}
+        </ul>
+        </p>
+        <p><strong>Mécaniques :</strong>
+        <ul>
+            {% for mechanic in game.mechanics %}
+            <li>{{ mechanic.name }}</li>
+            {% endfor %}
+        </ul>
+        </p>
 
-    <a href="{{ url_for('get_games') }}">Retour à la liste des jeux</a>
+        <a href="{{ url_for('get_games') }}">Retour à la liste des jeux</a>
+    </div>
+
 
 </body>
 
@@ -83,5 +87,10 @@
     .nav-img {
         height: 80px;
         display: flex
+    }
+
+
+    .main-text {
+        padding-left: 10%;
     }
 </style>
