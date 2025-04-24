@@ -29,15 +29,17 @@
     <h2 class="section-title">Jeux du moment</h2>
     <div class="games-grid">
         {% for game in games %}
-        <div class="game-card">
-            <div class="img-div">
-                <img src="{{ url_for('static', filename='images/imgs_jeux/'+game.name+'.png') }}"
-                    alt="image-{{ game.name }}">
+        <a class="clickable-game" href="{{ url_for('game_detail', game_id=game.id) }}">
+            <div class="game-card">
+                <div class="img-div">
+                    <img src="{{ url_for('static', filename='images/imgs_jeux/'+game.name+'.png') }}"
+                        alt="image-{{ game.name }}">
+                </div>
+                <h3>{{ game.name }}</h3>
+                <p>{{ game.description }}</p>
+                <span>{{ game.ratings.average }}/10</span>
             </div>
-            <h3>{{ game.name }}</h3>
-            <p>{{ game.description }}</p>
-            <span>{{ game.ratings.average }}/10</span>
-        </div>
+        </a>
         {% endfor %}
     </div>
 
@@ -156,5 +158,10 @@
     .game-card span {
         font-weight: bold;
         color: #333;
+    }
+
+    .clickable-game {
+        text-decoration: none;
+        color: black;
     }
 </style>
