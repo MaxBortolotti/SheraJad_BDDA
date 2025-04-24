@@ -28,16 +28,16 @@
     <!-- Jeux du moments -->
     <h2 class="section-title">Jeux du moments</h2>
     <div class="games-grid">
-        {% for game in featured_games %}
+        {% for game in games %}
         <div class="game-card">
-            <img src="{{ url_for('static', filename='imgs_jeux/' + game.image) }}" alt="{{ game.name }}">
+            <img src="{{ url_for('static', filename='imgs_jeux/' + game.name) }}" alt="image-{{ game.name }}">
             <h3>{{ game.name }}</h3>
             <p>{{ game.description }}</p>
             <span>{{ game.price }}€</span>
         </div>
         {% endfor %}
     </div>
-    
+
 
 </body>
 
@@ -147,4 +147,3 @@
         color: #333;
     }
 </style>
-

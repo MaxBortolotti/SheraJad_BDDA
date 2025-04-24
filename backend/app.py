@@ -70,7 +70,6 @@ class Game(db.Model):
     wanting = db.Column(db.Integer)
     wishing = db.Column(db.Integer)
     idRa = db.Column(db.Integer, db.ForeignKey('rating.id'), unique=True, nullable=False)
-    image = db.Column(db.String(50))
 
     categories = db.relationship('Category', secondary='conngc', backref=db.backref('games', lazy='dynamic'))
     mechanics = db.relationship('Mechanic', secondary='conngm', backref=db.backref('games', lazy='dynamic'))
@@ -98,10 +97,8 @@ class ConnGP(db.Model):
 
 @app.route('/')
 def home():
-    # On sélectionne uniquement les jeux qui ont une image définie
-    featured_games = Game.query.filter(Game.image != None).all()
-    print(f"Jeux avec images : {[g.name for g in featured_games]}")
-    return render_template('home.html', featured_games=featured_games)
+    games = Game.query.all()
+    return render_template('home.html', message="Bienvenue sur notre site de jeux!", games=games)
 
 
 @app.route('/search-games', methods=['GET'])
