@@ -18,22 +18,22 @@
 
 
     <!-- Section Héro -->
-    <section class="hero">
+    <section class="title">
         <img src="{{ url_for('static', filename='images/LOGO.png') }}" alt="Sherajad Logo Board Game">
-        <div class="hero-text">
+        <div class="title-text">
             Bienvenue sur notre site où est répertorié plus de <strong>500 jeux de société</strong> !!!
         </div>
     </section>
 
     <!-- Jeux du moments -->
-    <h2 class="section-title">Jeux du moments</h2>
+    <h2 class="section-title">Jeux du moment</h2>
     <div class="games-grid">
         {% for game in games %}
         <div class="game-card">
             <img src="{{ url_for('static', filename='imgs_jeux/' + game.name) }}" alt="image-{{ game.name }}">
             <h3>{{ game.name }}</h3>
             <p>{{ game.description }}</p>
-            <span>{{ game.price }}€</span>
+            <span>{{ game.ratings.average }}/10</span>
         </div>
         {% endfor %}
     </div>
@@ -90,7 +90,7 @@
         padding-left: 10%;
     }
 
-    .hero {
+    .title {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
@@ -98,13 +98,13 @@
         padding: 40px;
     }
 
-    .hero img {
+    .title img {
         max-width: 350px;
         border-radius: 10px;
         margin-right: 40px;
     }
 
-    .hero-text {
+    .title-text {
         max-width: 400px;
         font-size: 24px;
         font-weight: bold;
