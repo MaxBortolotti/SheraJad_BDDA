@@ -120,13 +120,14 @@
     <div class="games-grid">
         {% for game in featured_games %}
         <div class="game-card">
-            <img src="{{ url_for('static', filename='images/games/' + game.image) }}" alt="{{ game.name }}">
+            <img src="{{ url_for('static', filename='imgs_jeux/' + game.image) }}" alt="{{ game.name }}">
             <h3>{{ game.name }}</h3>
             <p>{{ game.description }}</p>
             <span>{{ game.price }}€</span>
         </div>
         {% endfor %}
     </div>
+    
 
 </body>
 
