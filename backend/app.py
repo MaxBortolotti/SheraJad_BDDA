@@ -100,7 +100,7 @@ def home():
     games = Game.query.all()
     Rgames = games[10:12]
     Rgames.append(games[13])
-    return render_template('home.html', message="Bienvenue sur notre site de jeux!", games=games)
+    return render_template('home.html', message="Bienvenue sur notre site de jeux!", games=Rgames)
 
 
 @app.route('/search-games', methods=['GET'])

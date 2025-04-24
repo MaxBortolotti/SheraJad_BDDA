@@ -19,6 +19,10 @@
     <div class="main-text">
         <h1>Détails du jeu : {{ game.name }}</h1>
 
+        <div class="img-div">
+            <img class="game-img" src="{{ url_for('static', filename='images/imgs_jeux/'+game.name+'.png') }}"
+                alt="image-{{ game.name }}">
+        </div>
         <p><strong>Description :</strong> {{ game.description }}</p>
         <p><strong>Année de publication :</strong> {{ game.yearpublished }}</p>
         <p><strong>Nombre de joueurs :</strong> {{ game.minplayers }} - {{ game.maxplayers }}</p>
@@ -92,5 +96,18 @@
 
     .main-text {
         padding-left: 10%;
+    }
+
+    .game-img {
+        max-height: 200px;
+        max-width: 200px;
+        border-radius: 8px;
+    }
+
+    .img-div {
+        height: 200px;
+        width: 200px;
+        align-content: center;
+        padding-left: 4vw;
     }
 </style>
