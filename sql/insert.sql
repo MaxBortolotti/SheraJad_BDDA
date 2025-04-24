@@ -22,7 +22,7 @@ INSERT IGNORE INTO rating (id, average, bayesaverage, usersrated) VALUES
 INSERT IGNORE INTO game (id, name, description, yearpublished, minplayers, maxplayers, playingtime, minplaytime, maxplaytime, minage, owned, trading, wanting, wishing, idRa) VALUES
 (1, 'Terraforming Mars', 'In Terraforming Mars, you compete to build the best and most efficient city on Mars.', 2016, 1, 5, 120, 120, 120, 12, 50000, 1000, 2000, 3000, 1),
 (2, 'Gloomhaven', 'Gloomhaven is a tactical miniatures combat-driven game in a persistent world of dark fantasy.', 2017, 1, 4, 60, 60, 120, 14, 70000, 1500, 2500, 3500, 2),
-(3, 'Brass: Birmingham', 'Brass: Birmingham is an economic strategy game where players compete as entrepreneurs in Birmingham during the industrial revolution.', 2018, 2, 4, 120, 120, 120, 14, 25000, 500, 1500, 2000, 3),
+(3, 'Brass Birmingham', 'Brass: Birmingham is an economic strategy game where players compete as entrepreneurs in Birmingham during the industrial revolution.', 2018, 2, 4, 120, 120, 120, 14, 25000, 500, 1500, 2000, 3),
 (4, 'Azul', 'Azul is a tile-laying game where players draft colored tiles and carefully create a stained glass window pattern.', 2017, 1, 4, 45, 30, 45, 8, 60000, 2000, 3000, 4000, 4),
 (5, 'Root', 'Root is a game of woodland might and right, where players control factions vying for control of a vast forest.', 2018, 2, 4, 90, 60, 120, 10, 40000, 1000, 2000, 2500, 5),
 (6, 'Scythe', 'Scythe is an engine-building game set in an alternate-history 1920s period, where players conquer territory in Eastern Europa.', 2016, 1, 5, 115, 90, 115, 14, 65000, 1500, 2500, 3000, 6),
@@ -183,8 +183,10 @@ INSERT IGNORE INTO review (id, userrating, message, idRa, idP) VALUES
 
 INSERT IGNORE INTO users (email, password, creationdate, idP) VALUES ("user@example.com", SHA2(CONCAT(NOW(), "user"), 224), NOW(), 33);
 
+/*
 DELETE FROM users WHERE idP = 33;
 SELECT * FROM users;
+*/
 
 /*
 SELECT * FROM game;
@@ -196,6 +198,8 @@ SELECT * FROM person;
 SELECT * FROM connGC;
 SELECT * FROM connGM;
 SELECT * FROM connGP;
+SELECT * FROM person;
+SELECT * FROM users;
 */
 
 #SELECT game.id, game.name, game.idRa, rating.id, rating.average, rating.bayesaverage, rating.usersrated FROM game JOIN rating ON game.idRa = rating.id;

@@ -30,7 +30,10 @@
     <div class="games-grid">
         {% for game in games %}
         <div class="game-card">
-            <img src="{{ url_for('static', filename='imgs_jeux/' + game.name) }}" alt="image-{{ game.name }}">
+            <div class="img-div">
+                <img src="{{ url_for('static', filename='images/imgs_jeux/'+game.name+'.png') }}"
+                    alt="image-{{ game.name }}">
+            </div>
             <h3>{{ game.name }}</h3>
             <p>{{ game.description }}</p>
             <span>{{ game.ratings.average }}/10</span>
@@ -118,7 +121,8 @@
 
     .games-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(180px, max-content));
+        justify-content: center;
         gap: 30px;
         padding: 0 40px 60px;
     }
@@ -128,9 +132,16 @@
     }
 
     .game-card img {
-        width: 100%;
-        height: auto;
+        max-height: 170px;
+        max-width: 170px;
         border-radius: 8px;
+    }
+
+    .img-div {
+        height: 170px;
+        width: 170px;
+        align-content: center;
+        justify-self: center;
     }
 
     .game-card h3 {
