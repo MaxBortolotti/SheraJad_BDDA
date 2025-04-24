@@ -16,15 +16,33 @@
         <a href="/auth">Connexion</a>
     </nav>
 
-    <div class="main-text">
-        <h1>Accueil</h1>
-        <p>{{ message }}</p>
-        <a href="/search-games">Voir la liste des jeux</a>
+
+    <!-- Section Héro -->
+    <section class="hero">
+        <img src="{{ url_for('static', filename='images/LOGO.png') }}" alt="Sherajad Logo Board Game">
+        <div class="hero-text">
+            Bienvenue sur notre site où est répertorié plus de <strong>500 jeux de société</strong> !!!
+        </div>
+    </section>
+
+    <!-- Jeux du moments -->
+    <h2 class="section-title">Jeux du moments</h2>
+    <div class="games-grid">
+        {% for game in featured_games %}
+        <div class="game-card">
+            <img src="{{ url_for('static', filename='imgs_jeux/' + game.image) }}" alt="{{ game.name }}">
+            <h3>{{ game.name }}</h3>
+            <p>{{ game.description }}</p>
+            <span>{{ game.price }}€</span>
+        </div>
+        {% endfor %}
     </div>
+    
 
 </body>
 
 </html>
+
 
 
 <style>
@@ -71,4 +89,62 @@
     .main-text {
         padding-left: 10%;
     }
+
+    .hero {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+    }
+
+    .hero img {
+        max-width: 350px;
+        border-radius: 10px;
+        margin-right: 40px;
+    }
+
+    .hero-text {
+        max-width: 400px;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .section-title {
+        text-align: center;
+        margin: 50px 0 20px;
+        font-size: 28px;
+    }
+
+    .games-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 30px;
+        padding: 0 40px 60px;
+    }
+
+    .game-card {
+        text-align: center;
+    }
+
+    .game-card img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    .game-card h3 {
+        margin: 10px 0 5px;
+    }
+
+    .game-card p {
+        color: #555;
+        font-size: 14px;
+    }
+
+    .game-card span {
+        font-weight: bold;
+        color: #333;
+    }
 </style>
+

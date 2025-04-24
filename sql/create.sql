@@ -82,6 +82,7 @@ CREATE TABLE game(
    wanting INT,
    wishing INT,
    idRa INT,
+   image VARCHAR(50),
    PRIMARY KEY(id),
    UNIQUE(idRa),
    FOREIGN KEY(idRa) REFERENCES rating(id)
