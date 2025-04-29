@@ -112,6 +112,8 @@ def get_games():
         games = Game.query.order_by(Game.yearpublished).all()
     elif sort_by == 'average':
         games = Game.query.join(Rating).order_by(Rating.average.desc()).all()
+    elif sort_by == 'minplayers' : 
+        games = Game.query.order_by(Game.minplayers).all()
     else:
         games = Game.query.all()
     return render_template('search-games.html', games=games)
