@@ -17,40 +17,55 @@
         <a href="/auth">Connexion</a>
     </nav>
 
-
     <div class="main-text">
         <h1>Liste des jeux</h1>
+        <form method="GET" action="/search-games">
+            <label for="lastname">Rechercher par nom de famille du créateur :</label>
+            <input type="text" id="lastname" name="lastname" value="{{ lastname or '' }}">
+            <!--<button type="submit">Rechercher</button> -->
+        </form>
 
+        <!-- Message d'information -->
+        {% if message %}
+        <p style="color: red;"><strong>{{ message }}</strong></p>
+        {% endif %}
+
+        <!-- Formulaire de tri -->
         <form method="GET" action="/search-games">
             <label for="sort_by">Trier par :</label>
             <select name="sort_by" id="sort_by" onchange="this.form.submit()">
                 <option value="name" {% if request.args.get('sort_by')=='name' %}selected{% endif %}>Nom</option>
                 <option value="yearpublished" {% if request.args.get('sort_by')=='yearpublished' %}selected{% endif %}>
-                    Année
-                    de publication</option>
-                <option value="average" {% if request.args.get('sort_by')=='average' %}selected{% endif %}>
-                    Note utilisateurs</option>
-                <option value="minplayers" {% if request.args.get('sort_by')=='minplayers' %}selected{% endif %}>Nb de
-                    joueur croissant</option>
+                    Année de publication</option>
+                <option value="average" {% if request.args.get('sort_by')=='average' %}selected{% endif %}>Note
+                    utilisateurs</option>
+                <option value="minplayers" {% if request.args.get('sort_by')=='minplayers' %}selected{% endif %}>Nb mini
+                    de joueurs croissant</option>
             </select>
         </form>
 
+
+
+        <!-- Liste des jeux -->
         <ul>
             {% for game in games %}
             <li>
-                <a class="clickable-game" href="{{ url_for('game_detail', game_id=game.id) }}"><strong>{{ game.name
-                        }}</strong> ({{ game.yearpublished }}) [{{ game.ratings.average }}]</a>
+                <a class="clickable-game" href="{{ url_for('game_detail', game_id=game.id) }}">
+                    <strong>{{ game.name }}</strong> ({{ game.yearpublished }})
+                    {% if game.ratings and game.ratings.average %}
+                    [{{ game.ratings.average }}]
+                    {% endif %}
+                </a>
             </li>
             {% endfor %}
         </ul>
 
         <a href="/">Retour à l'accueil</a>
     </div>
+
 </body>
 
 </html>
-
-
 
 <style>
     body {

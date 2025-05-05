@@ -29,7 +29,9 @@
         <p><strong>Nombre de joueurs :</strong> {{ game.minplayers }} - {{ game.maxplayers }}</p>
         <p><strong>Temps de jeu :</strong> {{ game.minplaytime }} - {{ game.maxplaytime }} minutes</p>
         <p><strong>Âge minimum :</strong> {{ game.minage }}</p>
-        <p><strong>Note des utilisateurs :</strong> {{ game.ratings.average }}</p>
+        <p>
+            <strong>Note des utilisateurs :</strong> {{ game.ratings.average }} ( {{ game.ratings.usersrated }} avis )
+        </p>
         <p><strong>Catégories :</strong>
         <ul>
             {% for category in game.categories %}
