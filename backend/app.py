@@ -128,6 +128,38 @@ def game_detail(game_id):
     return render_template('game-detail.html', game=game)
 
 
+@app.route('/ajout-avis', methods=['POST'])
+def ajoutavis():
+    if request.method == 'POST':
+        note = request.form['note']
+        description = request.form['description']
+        new_review = Review(userrating=note, message=description, idRa=Game.query.join(Rating).id ) #, idP=current_user.ID
+        db.session.add(new_review)
+        db.session.commit()
+        flash('Avis Ajouté !')
+        return redirect(url_for('login'))
+    return render_template('login.html')
+
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+
+        # Hacher le mot de passe
+        hashed_password = (sha256(password.encode("utf-8"))).hexdigest()
+        new_user = User(username=username, email=email, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+        flash('Inscription réussie ! Vous pouvez maintenant vous connecter.')
+        return redirect(url_for('login'))
+    return render_template('register.html')
+
+
+
 
 # --- MAIN ---
 
