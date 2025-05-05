@@ -1,12 +1,25 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
 
+#config pour lien Flask-BDD
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/sherajad'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+#config pour login
+app.secret_key = 'super secret key'
+app.config['SESSION_TYPE'] = 'filesystem'
+#sess.init_app(app)
 db = SQLAlchemy(app)
+
+
+#config flask_login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 # --- MODELS ---
 
@@ -126,6 +139,23 @@ def game_detail(game_id):
     return render_template('game-detail.html', game=game)
 
 
+@app.route('/auth', methods=['GET', 'POST'])
+def auth():
+    if request.method == 'POST':
+        # Logique de connexion
+        username = request.form['username']
+        password = request.form['password']
+        result = db.session.execute(SQLAlchemy.text('SELECT * FROM users WHERE user_name = '+username+' AND password COLLATE utf8mb4_general_ci  = sha2(concat(creationdate, '+password+'), 224) COLLATE utf8mb4_general_ci'))
+        if result.one_or_none() :
+            #login_user(user)
+            return redirect(url_for('home'))
+        else:
+            flash('Identifiants invalides.')
+    return render_template('auth.html')
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id)) 
 
 # --- MAIN ---
 
