@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template, redirect, url_for, flash
-from flask_sqlalchemy import SQLAlchemy, SQLAlchemy.sql.text
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import text
 
 from datetime import datetime
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -66,6 +67,13 @@ class User(db.Model):
     password = db.Column(db.String(255))
     creationdate = db.Column(db.DateTime, default=datetime.utcnow)
     idP = db.Column(db.Integer, db.ForeignKey('person.id'), unique=True, nullable=False)
+
+    def get_id(self):
+        return str(self.id)
+
+    @property
+    def is_active(self):
+        return True
 
 class Game(db.Model):
     __tablename__ = 'game'
@@ -144,14 +152,24 @@ def game_detail(game_id):
 def auth():
     if request.method == 'POST':
         # Logique de connexion
-        username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
-        result = db.session.execute(SQLAlchemy.text('SELECT * FROM users WHERE user_name = '+username+' AND password COLLATE utf8mb4_general_ci  = sha2(concat(creationdate, '+password+'), 224) COLLATE utf8mb4_general_ci'))
-        if result.one_or_none() :
-            #login_user(user)
-            return redirect(url_for('home'))
+        result = db.session.execute(text('SELECT * FROM users WHERE email = "'+email+'" AND password COLLATE utf8mb4_general_ci  = sha2(concat(creationdate, "'+password+'"), 224) COLLATE utf8mb4_general_ci'))
+        authIsValid = result.one_or_none() is not None
+
+
+        if authIsValid:
+            # Récupérer l'utilisateur de la base de données
+            user = User.query.filter_by(email=email).first()
+            if user:
+                login_user(user)
+                flash('Connexion réussie !')
+                return redirect(url_for('home'))
+            else:
+                flash('Utilisateur non trouvé.')
         else:
             flash('Identifiants invalides.')
+
     return render_template('auth.html')
 
 @login_manager.user_loader
