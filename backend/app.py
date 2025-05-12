@@ -74,6 +74,12 @@ class User(db.Model):
     @property
     def is_active(self):
         return True
+    
+    @property
+    def is_authenticated(self):
+        return True
+    
+
 
 class Game(db.Model):
     __tablename__ = 'game'
@@ -202,6 +208,13 @@ def auth():
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id)) 
+
+
+@app.route('/logout')
+#@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
 
 # --- MAIN ---
 
