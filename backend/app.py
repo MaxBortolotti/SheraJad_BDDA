@@ -1,5 +1,7 @@
 from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import text
+
 from datetime import datetime
 
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
@@ -52,6 +54,19 @@ class User(db.Model):
     password = db.Column(db.String(255))
     creationdate = db.Column(db.DateTime, default=datetime.utcnow)
     idP = db.Column(db.Integer, db.ForeignKey('person.id'), unique=True, nullable=False)
+
+    def get_id(self):
+        return str(self.id)
+
+    @property
+    def is_active(self):
+        return True
+    
+    @property
+    def is_authenticated(self):
+        return True
+    
+
 
 class Game(db.Model):
     __tablename__ = 'game'
@@ -143,7 +158,52 @@ def game_detail(game_id):
     game = Game.query.get_or_404(game_id)
     return render_template('game-detail.html', game=game)
 
+@app.route('/ajout-avis', methods=['POST'])
+def ajoutavis():
+    if request.method == 'POST':
+        note = request.form['note']
+        description = request.form['description']
+        new_review = Review(userrating=note, message=description, idRa=Game.query.join(Rating).id ) #, idP=current_user.ID
+        db.session.add(new_review)
+        db.session.commit()
+        flash('Avis Ajouté !')
+        return redirect(url_for('login'))
+    return render_template('login.html')
 
+
+@app.route('/auth', methods=['GET', 'POST'])
+def auth():
+    if request.method == 'POST':
+        # Logique de connexion
+        email = request.form['email']
+        password = request.form['password']
+        result = db.session.execute(text('SELECT * FROM users WHERE email = "'+email+'" AND password COLLATE utf8mb4_general_ci  = sha2(concat(creationdate, "'+password+'"), 224) COLLATE utf8mb4_general_ci'))
+        authIsValid = result.one_or_none() is not None
+
+
+        if authIsValid:
+            # Récupérer l'utilisateur de la base de données
+            user = User.query.filter_by(email=email).first()
+            if user:
+                login_user(user)
+                flash('Connexion réussie !')
+            else:
+                flash('Utilisateur non trouvé.')
+        else:
+            flash('Identifiants invalides.')
+
+    return render_template('auth.html')
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id)) 
+
+
+@app.route('/logout')
+#@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
 
 # --- MAIN ---
 

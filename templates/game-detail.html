@@ -15,6 +15,7 @@
         <a href="/">Accueil</a>
         <a href="/search-games">Jeux</a>
         <a href="/auth">Connexion</a>
+        <a href="{{ url_for('logout') }}">Déconnexion</a>
     </nav>
 
     <div class="container">
@@ -57,6 +58,8 @@
 
             <a class="back-link" href="{{ url_for('get_games') }}">← Retour à la liste des jeux</a>
         </div>
+
+        <a href="{{ url_for('get_games') }}">Retour à la liste des jeux</a>
     </div>
 </body>
 
