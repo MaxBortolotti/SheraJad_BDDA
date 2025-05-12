@@ -1,15 +1,25 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 
 from datetime import datetime
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+
 
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/sherajad'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = 'super secret key'
+app.config['SESSION_TYPE'] = 'filesystem'
+#sess.init_app(app)
 db = SQLAlchemy(app)
 
+
+#config flask_login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 # --- MODELS ---
 
 class Category(db.Model):

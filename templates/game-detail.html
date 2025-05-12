@@ -15,7 +15,6 @@
         <a href="/">Accueil</a>
         <a href="/search-games">Jeux</a>
         <a href="/auth">Connexion</a>
-        <a href="{{ url_for('logout') }}">Déconnexion</a>
     </nav>
 
     <div class="container">
@@ -56,11 +55,19 @@
                 </ul>
             </div>
 
-            <a class="back-link" href="{{ url_for('get_games') }}">← Retour à la liste des jeux</a>
+            <div class="avis-user">
+                <form method="POST" action="{{ url_for('ajoutavis') }}">
+                    <div class="form-group">
+                        <input name="note" type="number" placeholder="Votre note" step="0.5" required>
+                    </div>
+                    <div class="form-group">
+                        <input name="description" type="text" placeholder="Votre avis" maxlength="255" required>
+                    </div>
+                    <button type="submit" class="btn-login">Envoyer l'avis</button>
+                </form>
+                <a class="back-link" href="{{ url_for('get_games') }}">← Retour à la liste des jeux</a>
+            </div>
         </div>
-
-        <a href="{{ url_for('get_games') }}">Retour à la liste des jeux</a>
-    </div>
 </body>
 
 </html>
