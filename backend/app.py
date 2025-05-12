@@ -163,6 +163,18 @@ def game_detail(game_id):
     game = Game.query.get_or_404(game_id)
     return render_template('game-detail.html', game=game)
 
+@app.route('/ajout-avis', methods=['POST'])
+def ajoutavis():
+    if request.method == 'POST':
+        note = request.form['note']
+        description = request.form['description']
+        new_review = Review(userrating=note, message=description, idRa=Game.query.join(Rating).id ) #, idP=current_user.ID
+        db.session.add(new_review)
+        db.session.commit()
+        flash('Avis Ajouté !')
+        return redirect(url_for('login'))
+    return render_template('login.html')
+
 
 @app.route('/auth', methods=['GET', 'POST'])
 def auth():
