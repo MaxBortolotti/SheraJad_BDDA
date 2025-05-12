@@ -1,12 +1,26 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import text
+
 from datetime import datetime
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Amaziane47@localhost/sherajad'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+#config pour login
+app.secret_key = 'super secret key'
+app.config['SESSION_TYPE'] = 'filesystem'
+#sess.init_app(app)
 db = SQLAlchemy(app)
+
+
+#config flask_login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 # --- MODELS ---
 
@@ -52,6 +66,13 @@ class User(db.Model):
     password = db.Column(db.String(255))
     creationdate = db.Column(db.DateTime, default=datetime.utcnow)
     idP = db.Column(db.Integer, db.ForeignKey('person.id'), unique=True, nullable=False)
+
+    def get_id(self):
+        return str(self.id)
+
+    @property
+    def is_active(self):
+        return True
 
 class Game(db.Model):
     __tablename__ = 'game'
@@ -134,16 +155,50 @@ def get_games():
 
     return render_template('search-games.html', games=games, sort_by=sort_by, lastname=lastname, message=message)
 
-@app.route('/auth')
-def auth_func():
-    return render_template('auth.html')
-
 @app.route('/game/<int:game_id>')
 def game_detail(game_id):
     game = Game.query.get_or_404(game_id)
     return render_template('game-detail.html', game=game)
 
+@app.route('/ajout-avis', methods=['POST'])
+def ajoutavis():
+    if request.method == 'POST':
+        note = request.form['note']
+        description = request.form['description']
+        new_review = Review(userrating=note, message=description, idRa=Game.query.join(Rating).id ) #, idP=current_user.ID
+        db.session.add(new_review)
+        db.session.commit()
+        flash('Avis Ajouté !')
+        return redirect(url_for('login'))
+    return render_template('login.html')
 
+
+@app.route('/auth', methods=['GET', 'POST'])
+def auth():
+    if request.method == 'POST':
+        # Logique de connexion
+        email = request.form['email']
+        password = request.form['password']
+        result = db.session.execute(text('SELECT * FROM users WHERE email = "'+email+'" AND password COLLATE utf8mb4_general_ci  = sha2(concat(creationdate, "'+password+'"), 224) COLLATE utf8mb4_general_ci'))
+        authIsValid = result.one_or_none() is not None
+
+
+        if authIsValid:
+            # Récupérer l'utilisateur de la base de données
+            user = User.query.filter_by(email=email).first()
+            if user:
+                login_user(user)
+                flash('Connexion réussie !')
+            else:
+                flash('Utilisateur non trouvé.')
+        else:
+            flash('Identifiants invalides.')
+
+    return render_template('auth.html')
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id)) 
 
 # --- MAIN ---
 

@@ -30,7 +30,7 @@
         <p><strong>Temps de jeu :</strong> {{ game.minplaytime }} - {{ game.maxplaytime }} minutes</p>
         <p><strong>Âge minimum :</strong> {{ game.minage }}</p>
         <p>
-            <strong>Note des utilisateurs :</strong> {{ game.ratings.average }} ( {{ game.ratings.usersrated }} avis )
+            <strong>Note des utilisateurs :</strong> {{ game.ratings.average }} ({{ game.ratings.usersrated }} avis)
         </p>
         <p><strong>Catégories :</strong>
         <ul>
@@ -47,6 +47,18 @@
         </ul>
         </p>
 
+
+        <div class="avis-user">
+            <form method="POST" action="{{ url_for('ajoutavis') }}">
+                <div class="form-group">
+                    <input name="note" type="number" placeholder="Votre note" step="0.5" required>
+                </div>
+                <div class="form-group">
+                    <input name="description" type="text" placeholder="Votre avis" maxlength="255" required>
+                </div>
+                <button type="submit" class="btn-login">Envoyer l'avis</button>
+            </form>
+        </div>
         <a href="{{ url_for('get_games') }}">Retour à la liste des jeux</a>
     </div>
 
@@ -112,5 +124,22 @@
         width: 200px;
         align-content: center;
         padding-left: 4vw;
+    }
+
+    .avis-user input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    .avis-user input[name="note"] {
+        width: 10vw;
+    }
+
+    .avis-user input[name="description"] {
+        width: 30vw;
+        height: 5vh;
     }
 </style>
