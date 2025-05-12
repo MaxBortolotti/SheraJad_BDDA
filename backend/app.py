@@ -97,9 +97,7 @@ class ConnGP(db.Model):
 
 @app.route('/')
 def home():
-    games = Game.query.all()
-    Rgames = games[10:12]
-    Rgames.append(games[13])
+    Rgames = Game.query.order_by(Game.wishing.desc()).limit(6).all()
     return render_template('home.html', message="Bienvenue sur notre site de jeux!", games=Rgames)
 
 @app.route('/search-games', methods=['GET'])
