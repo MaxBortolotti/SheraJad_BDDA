@@ -17,38 +17,55 @@
         <a href="/auth">Connexion</a>
     </nav>
 
-
     <div class="main-text">
         <h1>Liste des jeux</h1>
+        <form method="GET" action="/search-games" id="Saisie_recherche">
+            <input type="text" id="lastname" name="lastname" value="{{ lastname or '' }}"
+                placeholder="Nom de famille du créateur">
+            <!--<button type="submit">Rechercher</button> -->
+        </form>
 
+        <!-- Message d'information -->
+        {% if message %}
+        <p style="color: red;"><strong>{{ message }}</strong></p>
+        {% endif %}
+
+        <!-- Formulaire de tri -->
         <form method="GET" action="/search-games">
             <label for="sort_by">Trier par :</label>
             <select name="sort_by" id="sort_by" onchange="this.form.submit()">
                 <option value="name" {% if request.args.get('sort_by')=='name' %}selected{% endif %}>Nom</option>
                 <option value="yearpublished" {% if request.args.get('sort_by')=='yearpublished' %}selected{% endif %}>
-                    Année
-                    de publication</option>
-                <option value="average" {% if request.args.get('sort_by')=='average' %}selected{% endif %}>
-                    Note utilisateurs</option>
+                    Année de publication</option>
+                <option value="average" {% if request.args.get('sort_by')=='average' %}selected{% endif %}>Note
+                    utilisateurs</option>
+                <option value="minplayers" {% if request.args.get('sort_by')=='minplayers' %}selected{% endif %}>Nb mini
+                    de joueurs croissant</option>
             </select>
         </form>
 
+
+
+        <!-- Liste des jeux -->
         <ul>
             {% for game in games %}
             <li>
-                <a class="clickable-game" href="{{ url_for('game_detail', game_id=game.id) }}"><strong>{{ game.name
-                        }}</strong> ({{ game.yearpublished }}) [{{ game.ratings.average }}]</a>
+                <a class="clickable-game" href="{{ url_for('game_detail', game_id=game.id) }}">
+                    <strong>{{ game.name }}</strong> ({{ game.yearpublished }})
+                    {% if game.ratings and game.ratings.average %}
+                    [{{ game.ratings.average }}]
+                    {% endif %}
+                </a>
             </li>
             {% endfor %}
         </ul>
 
         <a href="/">Retour à l'accueil</a>
     </div>
+
 </body>
 
 </html>
-
-
 
 <style>
     body {
@@ -91,12 +108,71 @@
         display: flex
     }
 
-    .clickable-game {
-        text-decoration: none;
-        color: black;
-    }
 
     .main-text {
         padding-left: 10%;
+    }
+
+    #Saisie_recherche {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        padding: 15px 20px;
+        width: fit-content;
+        background-color: #f9f9f9;
+        border: 1px solid #ccc;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    #Saisie_recherche input[type="text"] {
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    #Saisie_recherche input[type="text"]:focus {
+        border-color: #fd963f;
+        box-shadow: 0 0 5px rgba(253, 150, 63, 0.5);
+        outline: none;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 40px auto;
+        max-width: 800px;
+    }
+
+    li {
+        margin-bottom: 15px;
+    }
+
+    .clickable-game {
+        display: block;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-decoration: none;
+        color: #333;
+        font-size: 18px;
+        transition: transform 0.2s, box-shadow 0.3s;
+    }
+
+    .clickable-game:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        background-color: #fef7f1;
+        color: #000;
+    }
+
+    .clickable-game strong {
+        color: #fd963f;
+        font-size: 20px;
     }
 </style>

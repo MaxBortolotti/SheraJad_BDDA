@@ -124,24 +124,56 @@ def home():
     Rgames.append(games[13])
     return render_template('home.html', message="Bienvenue sur notre site de jeux!", games=Rgames)
 
-
 @app.route('/search-games', methods=['GET'])
 def get_games():
-    sort_by = request.args.get('sort_by', 'name')
-    if sort_by == 'name':
-        games = Game.query.order_by(Game.name).all()
-    elif sort_by == 'yearpublished':
-        games = Game.query.order_by(Game.yearpublished).all()
-    elif sort_by == 'average':
-        games = Game.query.join(Rating).order_by(Rating.average.desc()).all()
-    else:
-        games = Game.query.all()
-    return render_template('search-games.html', games=games)
+    sort_by = request.args.get('sort_by')
+    lastname = request.args.get('lastname')
+    games = []
+    message = None
+
+    try:
+        if lastname:
+            people = Person.query.filter(Person.lastname.ilike(f"%{lastname}%")).all()
+            if people:
+                person_ids = [p.id for p in people]
+                games = db.session.query(Game).join(ConnGP).filter(ConnGP.idP.in_(person_ids)).all()
+                if not games:
+                    message = "Aucun jeu trouvé pour ce nom de famille."
+            else:
+                message = "Aucune personne trouvée avec ce nom de famille."
+        else:
+            # Si aucune recherche par nom, alors on trie
+            if sort_by == 'name':
+                games = Game.query.order_by(Game.name).all()
+            elif sort_by == 'yearpublished':
+                games = Game.query.order_by(Game.yearpublished).all()
+            elif sort_by == 'average':
+                games = Game.query.join(Rating).order_by(Rating.average.desc()).all()
+            elif sort_by == 'minplayers':
+                games = Game.query.order_by(Game.minplayers).all()
+            else:
+                games = Game.query.all()
+    except Exception as e:
+        message = "Une erreur est survenue lors de la recherche."
+
+    return render_template('search-games.html', games=games, sort_by=sort_by, lastname=lastname, message=message)
 
 @app.route('/game/<int:game_id>')
 def game_detail(game_id):
     game = Game.query.get_or_404(game_id)
     return render_template('game-detail.html', game=game)
+
+@app.route('/ajout-avis', methods=['POST'])
+def ajoutavis():
+    if request.method == 'POST':
+        note = request.form['note']
+        description = request.form['description']
+        new_review = Review(userrating=note, message=description, idRa=Game.query.join(Rating).id ) #, idP=current_user.ID
+        db.session.add(new_review)
+        db.session.commit()
+        flash('Avis Ajouté !')
+        return redirect(url_for('login'))
+    return render_template('login.html')
 
 
 @app.route('/auth', methods=['GET', 'POST'])
