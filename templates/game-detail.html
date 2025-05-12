@@ -17,40 +17,47 @@
         <a href="/auth">Connexion</a>
     </nav>
 
-    <div class="main-text">
-        <h1>Détails du jeu : {{ game.name }}</h1>
+    <div class="container">
+        <div class="card">
+            <h1 class="game-title">{{ game.name }}</h1>
 
-        <div class="img-div">
-            <img class="game-img" src="{{ url_for('static', filename='images/imgs_jeux/'+game.name+'.png') }}"
-                alt="image-{{ game.name }}">
+            <div class="game-info">
+                <div class="image-container">
+                    <img class="game-img" src="{{ url_for('static', filename='images/imgs_jeux/'+game.name+'.png') }}"
+                        alt="image-{{ game.name }}">
+                </div>
+                <div class="details">
+                    <p><strong>Description :</strong> {{ game.description }}</p>
+                    <p><strong>Année de publication :</strong> {{ game.yearpublished }}</p>
+                    <p><strong>Nombre de joueurs :</strong> {{ game.minplayers }} - {{ game.maxplayers }}</p>
+                    <p><strong>Temps de jeu :</strong> {{ game.minplaytime }} - {{ game.maxplaytime }} minutes</p>
+                    <p><strong>Âge minimum :</strong> {{ game.minage }}</p>
+                    <p>
+                        <strong>Note des utilisateurs :</strong> {{ game.ratings.average }} ( {{ game.ratings.usersrated
+                        }} avis )
+                    </p>
+                </div>
+            </div>
+
+            <div class="list-group">
+                <p><strong>Catégories :</strong></p>
+                <ul>
+                    {% for category in game.categories %}
+                    <li>{{ category.name }}</li>
+                    {% endfor %}
+                </ul>
+
+                <p><strong>Mécaniques :</strong></p>
+                <ul>
+                    {% for mechanic in game.mechanics %}
+                    <li>{{ mechanic.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <a class="back-link" href="{{ url_for('get_games') }}">← Retour à la liste des jeux</a>
         </div>
-        <p><strong>Description :</strong> {{ game.description }}</p>
-        <p><strong>Année de publication :</strong> {{ game.yearpublished }}</p>
-        <p><strong>Nombre de joueurs :</strong> {{ game.minplayers }} - {{ game.maxplayers }}</p>
-        <p><strong>Temps de jeu :</strong> {{ game.minplaytime }} - {{ game.maxplaytime }} minutes</p>
-        <p><strong>Âge minimum :</strong> {{ game.minage }}</p>
-        <p>
-            <strong>Note des utilisateurs :</strong> {{ game.ratings.average }} ( {{ game.ratings.usersrated }} avis )
-        </p>
-        <p><strong>Catégories :</strong>
-        <ul>
-            {% for category in game.categories %}
-            <li>{{ category.name }}</li>
-            {% endfor %}
-        </ul>
-        </p>
-        <p><strong>Mécaniques :</strong>
-        <ul>
-            {% for mechanic in game.mechanics %}
-            <li>{{ mechanic.name }}</li>
-            {% endfor %}
-        </ul>
-        </p>
-
-        <a href="{{ url_for('get_games') }}">Retour à la liste des jeux</a>
     </div>
-
-
 </body>
 
 </html>
@@ -112,5 +119,86 @@
         width: 200px;
         align-content: center;
         padding-left: 4vw;
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        padding: 40px 20px;
+    }
+
+    .card {
+        background-color: white;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        max-width: 800px;
+        width: 100%;
+    }
+
+    .game-title {
+        text-align: center;
+        color: #fd963f;
+        margin-bottom: 20px;
+    }
+
+    .game-info {
+        display: flex;
+        flex-direction: column;
+
+        gap: 20px;
+        margin: 40px 0;
+    }
+
+    .image-container {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .game-img {
+        max-height: 200px;
+        max-width: 200px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .details {
+        max-width: 700px;
+        text-align: left;
+
+    }
+
+
+
+    .note {
+        font-weight: bold;
+        color: #04AA6D;
+    }
+
+    .list-group p {
+        margin-top: 20px;
+        font-weight: bold;
+    }
+
+    .list-group ul {
+        padding-left: 20px;
+        margin-top: 5px;
+    }
+
+    .list-group li {
+        margin-bottom: 5px;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 20px;
+        color: #fd963f;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
     }
 </style>
