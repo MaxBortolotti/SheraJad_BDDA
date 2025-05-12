@@ -1,12 +1,27 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import text
+
 from datetime import datetime
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
 
+#config pour lien Flask-BDD
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/sherajad'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+#config pour login
+app.secret_key = 'super secret key'
+app.config['SESSION_TYPE'] = 'filesystem'
+#sess.init_app(app)
 db = SQLAlchemy(app)
+
+
+#config flask_login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 # --- MODELS ---
 
@@ -52,6 +67,13 @@ class User(db.Model):
     password = db.Column(db.String(255))
     creationdate = db.Column(db.DateTime, default=datetime.utcnow)
     idP = db.Column(db.Integer, db.ForeignKey('person.id'), unique=True, nullable=False)
+
+    def get_id(self):
+        return str(self.id)
+
+    @property
+    def is_active(self):
+        return True
 
 class Game(db.Model):
     __tablename__ = 'game'
@@ -102,25 +124,39 @@ def home():
     Rgames.append(games[13])
     return render_template('home.html', message="Bienvenue sur notre site de jeux!", games=Rgames)
 
-
 @app.route('/search-games', methods=['GET'])
 def get_games():
-    sort_by = request.args.get('sort_by', 'name')
-    if sort_by == 'name':
-        games = Game.query.order_by(Game.name).all()
-    elif sort_by == 'yearpublished':
-        games = Game.query.order_by(Game.yearpublished).all()
-    elif sort_by == 'average':
-        games = Game.query.join(Rating).order_by(Rating.average.desc()).all()
-    elif sort_by == 'minplayers' : 
-        games = Game.query.order_by(Game.minplayers).all()
-    else:
-        games = Game.query.all()
-    return render_template('search-games.html', games=games)
+    sort_by = request.args.get('sort_by')
+    lastname = request.args.get('lastname')
+    games = []
+    message = None
 
-@app.route('/auth')
-def auth_func():
-    return render_template('auth.html')
+    try:
+        if lastname:
+            people = Person.query.filter(Person.lastname.ilike(f"%{lastname}%")).all()
+            if people:
+                person_ids = [p.id for p in people]
+                games = db.session.query(Game).join(ConnGP).filter(ConnGP.idP.in_(person_ids)).all()
+                if not games:
+                    message = "Aucun jeu trouvé pour ce nom de famille."
+            else:
+                message = "Aucune personne trouvée avec ce nom de famille."
+        else:
+            # Si aucune recherche par nom, alors on trie
+            if sort_by == 'name':
+                games = Game.query.order_by(Game.name).all()
+            elif sort_by == 'yearpublished':
+                games = Game.query.order_by(Game.yearpublished).all()
+            elif sort_by == 'average':
+                games = Game.query.join(Rating).order_by(Rating.average.desc()).all()
+            elif sort_by == 'minplayers':
+                games = Game.query.order_by(Game.minplayers).all()
+            else:
+                games = Game.query.all()
+    except Exception as e:
+        message = "Une erreur est survenue lors de la recherche."
+
+    return render_template('search-games.html', games=games, sort_by=sort_by, lastname=lastname, message=message)
 
 @app.route('/game/<int:game_id>')
 def game_detail(game_id):
@@ -128,38 +164,32 @@ def game_detail(game_id):
     return render_template('game-detail.html', game=game)
 
 
-@app.route('/ajout-avis', methods=['POST'])
-def ajoutavis():
+@app.route('/auth', methods=['GET', 'POST'])
+def auth():
     if request.method == 'POST':
-        note = request.form['note']
-        description = request.form['description']
-        new_review = Review(userrating=note, message=description, idRa=Game.query.join(Rating).id ) #, idP=current_user.ID
-        db.session.add(new_review)
-        db.session.commit()
-        flash('Avis Ajouté !')
-        return redirect(url_for('login'))
-    return render_template('login.html')
-
-
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form['username']
+        # Logique de connexion
         email = request.form['email']
         password = request.form['password']
-
-        # Hacher le mot de passe
-        hashed_password = (sha256(password.encode("utf-8"))).hexdigest()
-        new_user = User(username=username, email=email, password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
-        flash('Inscription réussie ! Vous pouvez maintenant vous connecter.')
-        return redirect(url_for('login'))
-    return render_template('register.html')
+        result = db.session.execute(text('SELECT * FROM users WHERE email = "'+email+'" AND password COLLATE utf8mb4_general_ci  = sha2(concat(creationdate, "'+password+'"), 224) COLLATE utf8mb4_general_ci'))
+        authIsValid = result.one_or_none() is not None
 
 
+        if authIsValid:
+            # Récupérer l'utilisateur de la base de données
+            user = User.query.filter_by(email=email).first()
+            if user:
+                login_user(user)
+                flash('Connexion réussie !')
+            else:
+                flash('Utilisateur non trouvé.')
+        else:
+            flash('Identifiants invalides.')
 
+    return render_template('auth.html')
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id)) 
 
 # --- MAIN ---
 
