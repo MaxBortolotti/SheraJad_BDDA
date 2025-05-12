@@ -138,10 +138,6 @@ def get_games():
         games = Game.query.all()
     return render_template('search-games.html', games=games)
 
-@app.route('/auth')
-def auth_func():
-    return render_template('auth.html')
-
 @app.route('/game/<int:game_id>')
 def game_detail(game_id):
     game = Game.query.get_or_404(game_id)
@@ -164,7 +160,6 @@ def auth():
             if user:
                 login_user(user)
                 flash('Connexion réussie !')
-                return redirect(url_for('home'))
             else:
                 flash('Utilisateur non trouvé.')
         else:
