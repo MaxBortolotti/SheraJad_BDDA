@@ -7,6 +7,7 @@
 </head>
 
 <body>
+
     <!-- Barre de navigation -->
     <nav>
         <a class="nav-img-link" href="/"><img class="nav-img" href="/"
@@ -18,27 +19,10 @@
     </nav>
 
 
-    <div id="login-page" class="container">
-        <h2>Connexion</h2>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        {% for category, message in messages %}
-        <div class="flash {{ category }}">{{ message }}</div>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
-        <form method="POST" action="{{ url_for('auth') }}">
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="text" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Mot de passe </label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit" class="btn-login">Se connecter</button>
-        </form>
+    <div class="main-text">
+        <h1>Page d'Authentification</h1>
     </div>
+
 </body>
 
 </html>

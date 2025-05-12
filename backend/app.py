@@ -1,27 +1,14 @@
-from flask import Flask, request, render_template, redirect, url_for, flash
+from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 
 from datetime import datetime
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
 
-#config pour lien Flask-BDD
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/sherajad'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-#config pour login
-app.secret_key = 'super secret key'
-app.config['SESSION_TYPE'] = 'filesystem'
-#sess.init_app(app)
 db = SQLAlchemy(app)
-
-
-#config flask_login
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
 
 # --- MODELS ---
 
@@ -125,9 +112,7 @@ class ConnGP(db.Model):
 
 @app.route('/')
 def home():
-    games = Game.query.all()
-    Rgames = games[10:12]
-    Rgames.append(games[13])
+    Rgames = Game.query.order_by(Game.wishing.desc()).limit(6).all()
     return render_template('home.html', message="Bienvenue sur notre site de jeux!", games=Rgames)
 
 @app.route('/search-games', methods=['GET'])
@@ -163,6 +148,10 @@ def get_games():
         message = "Une erreur est survenue lors de la recherche."
 
     return render_template('search-games.html', games=games, sort_by=sort_by, lastname=lastname, message=message)
+
+@app.route('/auth')
+def auth_func():
+    return render_template('auth.html')
 
 @app.route('/game/<int:game_id>')
 def game_detail(game_id):

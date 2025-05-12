@@ -46,7 +46,7 @@ CREATE TABLE person(
 CREATE TABLE review(
    id INT,
    userrating DECIMAL(5,3)  ,
-   message VARCHAR(255) ,
+   message VARCHAR(50) ,
    idRa INT NOT NULL,
    idP INT NOT NULL,
    PRIMARY KEY(id),
