@@ -64,8 +64,7 @@ class User(db.Model):
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(255))
     creationdate = db.Column(db.DateTime, default=datetime.utcnow)
-    is_admin = db.Column(db.Boolean, default=False)
-
+    admin = db.Column(db.Boolean, default=False)
     idP = db.Column(db.Integer, db.ForeignKey('person.id'), unique=True, nullable=False)
 
     def get_id(self):
@@ -123,22 +122,6 @@ class ConnGP(db.Model):
 
 
 # --- ROUTES ---
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated or not getattr(current_user, 'is_admin', False):
-            abort(403)
-        return f(*args, **kwargs)
-    return decorated_function
-
-def login_required(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        if "user_id" not in session:
-            flash("Connectez-vous d'abord.")
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return wrapper  # <= cette ligne manquait !
 
 
 @app.route('/')
@@ -272,57 +255,72 @@ def register():
         return redirect(url_for('auth'))
     return render_template('register.html')
 
-@app.route('/admin')
-@admin_required
-def admin_panel():
-    users = User.query.all()
-    games = Game.query.all()
-    return render_template("admin.html", users=users, games=games)
-
-@app.route("/admin/delete_user/<int:user_id>", methods=["POST"])
+#ADMIN DASHBORD
+@app.route('/dashboard_admin')
 @login_required
-@admin_required
+def dashboard_admin():
+    # Vérifiez si l'utilisateur actuel est un admin
+    if not current_user.admin:
+        flash('Accès non autorisé.')
+        return redirect(url_for('home'))
+
+    users = User.query.all()
+    return render_template('dashboard_admin.html', users=users)
+
+@app.route('/admin/create-user', methods=['POST'])
+@login_required
+def create_user():
+    if not current_user.admin:
+        flash('Accès non autorisé.')
+        return redirect(url_for('home'))
+
+    prenom = request.form['prenom']
+    nom = request.form['nom']
+    email = request.form['email']
+    password = request.form['password']
+
+    # Vérifie si un utilisateur avec cet email existe déjà
+    if User.query.filter_by(email=email).first():
+        flash('Email déjà utilisé.')
+        return redirect(url_for('dashboard_admin'))
+
+    # Création de la personne
+    new_person = Person(lastname=nom, firstname=prenom)
+    db.session.add(new_person)
+    db.session.commit()
+    person = Person.query.filter_by(lastname=nom, firstname=prenom).first()
+    person_id = person.id
+
+    # Insertion dans la table users avec password haché dynamiquement
+    query = text("""
+        INSERT INTO users (email, password, idP, creationdate)
+        VALUES (:email, SHA2(CONCAT(NOW(), :password), 224), :idP, NOW())
+    """)
+    db.session.execute(query, {
+        'email': email,
+        'password': password,
+        'idP': person_id
+    })
+    db.session.commit()
+
+    flash('Utilisateur créé avec succès.')
+    return redirect(url_for('dashboard_admin'))
+
+@app.route('/admin/delete-user/<int:user_id>', methods=['POST'])
+@login_required
 def delete_user(user_id):
+    if not current_user.admin:
+        flash('Accès non autorisé.')
+        return redirect(url_for('home'))
+
     user = User.query.get_or_404(user_id)
     db.session.delete(user)
     db.session.commit()
-    flash("Utilisateur supprimé.")
-    return redirect(url_for("admin_panel"))
+    flash('Utilisateur supprimé avec succès.')
+    return redirect(url_for('dashboard_admin'))
 
-@app.route("/admin/delete_game/<int:game_id>", methods=["POST"])
-@login_required
-@admin_required
-def delete_game(game_id):
-    game = Game.query.get_or_404(game_id)
-    db.session.delete(game)
-    db.session.commit()
-    flash("Jeu supprimé.")
-    return redirect(url_for("admin_panel"))
 
-@app.route("/admin/add_game", methods=["POST"])
-@login_required
-@admin_required
-def add_game():
-    new_game = Game(
-        name=request.form["name"],
-        description=request.form.get("description", ""),
-        yearpublished=request.form.get("yearpublished", None),
-        minplayers=request.form.get("minplayers", None),
-        maxplayers=request.form.get("maxplayers", None),
-        playingtime=request.form.get("playingtime", None),
-        minplaytime=request.form.get("minplaytime", None),
-        maxplaytime=request.form.get("maxplaytime", None),
-        minage=request.form.get("minage", None),
-        owned=0,
-        trading=0,
-        wanting=0,
-        wishing=0,
-        idRa=1
-    )
-    db.session.add(new_game)
-    db.session.commit()
-    flash("Jeu ajouté.")
-    return redirect(url_for("admin_panel"))
+
 
 
 # --- MAIN ---

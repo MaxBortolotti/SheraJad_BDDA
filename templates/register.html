@@ -14,10 +14,9 @@
                 src="{{ url_for('static', filename='images/LOGO.png') }}" alt="Sherajad-Logo" /></a>
         <a href="/">Accueil</a>
         <a href="/search-games">Jeux</a>
-        {% if current_user.is_authenticated and current_user.is_admin %}
-        <a href="{{ url_for('admin_panel') }}">Admin Dashboard</a>
+        {% if current_user.admin %}
+        <a href="{{ url_for('dashboard_admin') }}">Gestion-Admin</a>
         {% endif %}
-
         {% if current_user.is_authenticated %}
         <a href="{{ url_for('logout') }}">Déconnexion</a>
         <span class="welcome-user">{{ current_user.person.firstname }}</span>
