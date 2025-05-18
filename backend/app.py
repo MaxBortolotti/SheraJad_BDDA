@@ -1,7 +1,8 @@
 from flask import Flask, request, render_template, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
-
+from functools import wraps
+from flask import session, abort
 from datetime import datetime
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
@@ -121,6 +122,23 @@ class ConnGP(db.Model):
 
 
 # --- ROUTES ---
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or not getattr(current_user, 'is_admin', False):
+            abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
+
+def login_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if "user_id" not in session:
+            flash("Connectez-vous d'abord.")
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return wrapper  # <= cette ligne manquait !
+
 
 @app.route('/')
 def home():
@@ -249,12 +267,57 @@ def register():
     return render_template('register.html')
 
 @app.route('/admin')
+@admin_required
+def admin_panel():
+    users = User.query.all()
+    games = Game.query.all()
+    return render_template("admin.html", users=users, games=games)
+
+@app.route("/admin/delete_user/<int:user_id>", methods=["POST"])
 @login_required
-def admin_dashboard():
-    if not current_user.is_admin:
-        flash("Accès refusé.")
-        return redirect(url_for('home'))
-    return render_template('admin.html')
+@admin_required
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    flash("Utilisateur supprimé.")
+    return redirect(url_for("admin_panel"))
+
+@app.route("/admin/delete_game/<int:game_id>", methods=["POST"])
+@login_required
+@admin_required
+def delete_game(game_id):
+    game = Game.query.get_or_404(game_id)
+    db.session.delete(game)
+    db.session.commit()
+    flash("Jeu supprimé.")
+    return redirect(url_for("admin_panel"))
+
+@app.route("/admin/add_game", methods=["POST"])
+@login_required
+@admin_required
+def add_game():
+    new_game = Game(
+        name=request.form["name"],
+        description=request.form.get("description", ""),
+        yearpublished=request.form.get("yearpublished", None),
+        minplayers=request.form.get("minplayers", None),
+        maxplayers=request.form.get("maxplayers", None),
+        playingtime=request.form.get("playingtime", None),
+        minplaytime=request.form.get("minplaytime", None),
+        maxplaytime=request.form.get("maxplaytime", None),
+        minage=request.form.get("minage", None),
+        owned=0,
+        trading=0,
+        wanting=0,
+        wishing=0,
+        idRa=1
+    )
+    db.session.add(new_game)
+    db.session.commit()
+    flash("Jeu ajouté.")
+    return redirect(url_for("admin_panel"))
+
 
 # --- MAIN ---
 

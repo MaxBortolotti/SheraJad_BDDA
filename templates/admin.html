@@ -2,190 +2,77 @@
 <html lang="fr">
 
 <head>
-    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sherajad - Accueil</title>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
 </head>
 
 <body>
+    <h1>Bienvenue sur le panneau d'administration</h1>
 
-    <!-- Barre de navigation -->
-    <nav>
-        <a class="nav-img-link" href="/"><img class="nav-img" href="/"
-                src="{{ url_for('static', filename='images/LOGO.png') }}" alt="Sherajad-Logo" /></a>
-        <a href="/">Accueil</a>
-        <a href="/search-games">Jeux</a>
-        {% if current_user.is_authenticated and current_user.is_admin %}
-        <a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
-        {% endif %}
-
-        {% if current_user.is_authenticated %}
-        <a href="{{ url_for('logout') }}">Déconnexion</a>
-        <span class="welcome-user">{{ current_user.person.firstname }}</span>
-        {% else %}
-        <a href="/auth">Connexion</a>
-        <a href="/register">Créer un compte</a>
-        {% endif %}
-    </nav>
-
-
-    <!-- Section Titre -->
-    <section class="title">
-        <img src="{{ url_for('static', filename='images/LOGO.png') }}" alt="Sherajad Logo Board Game">
-        <div class="title-text">
-            <h1>SAUCE</h1>
-        </div>
-    </section>
-
-    <!-- Jeux du moments -->
-    <h2 class="section-title">Jeux les plus demandés</h2>
-    <div class="games-grid">
-        {% for game in games %}
-        <a class="clickable-game" href="{{ url_for('game_detail', game_id=game.id) }}">
-            <div class="game-card">
-                <div class="img-div">
-                    <img src="{{ url_for('static', filename='images/imgs_jeux/'+game.name+'.png') }}"
-                        alt="image-{{ game.name }}">
-                </div>
-                <h3>{{ game.name }}</h3>
-                <p>{{ game.description }}</p>
-                <span>{{ game.ratings.average }}/10
-                    <br>
-                    {{game.wishing}}
-                    {% if game.wishing > 1 %} personnes le souhaitent {% else %} personne le souhaite {% endif %}
-                    </br>
-                </span>
-            </div>
-        </a>
+    <!-- SECTION UTILISATEURS -->
+    <h2>Gestion des utilisateurs</h2>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Admin</th>
+            <th>Action</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.is_admin }}</td>
+            <td>
+                <form action="{{ url_for('delete_user', user_id=user.id) }}" method="post">
+                    <button type="submit">Supprimer</button>
+                </form>
+            </td>
+        </tr>
         {% endfor %}
-    </div>
+    </table>
 
+    <hr>
+
+    <!-- SECTION JEUX -->
+    <h2>Gestion des jeux de société</h2>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Année</th>
+            <th>Joueurs</th>
+            <th>Action</th>
+        </tr>
+        {% for game in games %}
+        <tr>
+            <td>{{ game.id }}</td>
+            <td>{{ game.name }}</td>
+            <td>{{ game.yearpublished }}</td>
+            <td>{{ game.minplayers }} - {{ game.maxplayers }}</td>
+            <td>
+                <form action="{{ url_for('delete_game', game_id=game.id) }}" method="post">
+                    <button type="submit">Supprimer</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Ajouter un nouveau jeu</h3>
+    <form action="{{ url_for('add_game') }}" method="post">
+        <input type="text" name="name" placeholder="Nom" required><br>
+        <input type="text" name="description" placeholder="Description"><br>
+        <input type="number" name="yearpublished" placeholder="Année"><br>
+        <input type="number" name="minplayers" placeholder="Joueurs min"><br>
+        <input type="number" name="maxplayers" placeholder="Joueurs max"><br>
+        <input type="number" name="playingtime" placeholder="Temps total"><br>
+        <input type="number" name="minplaytime" placeholder="Temps min"><br>
+        <input type="number" name="maxplaytime" placeholder="Temps max"><br>
+        <input type="number" name="minage" placeholder="Âge minimum"><br>
+        <button type="submit">Ajouter</button>
+    </form>
 
 </body>
 
 </html>
-
-
-
-<style>
-    body {
-        margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
-    }
-
-    nav {
-        overflow: hidden;
-        background-color: #333;
-        display: flex;
-        justify-content: space-between;
-        padding-left: 30%;
-        padding-right: 30%;
-    }
-
-    nav a:not(.nav-img-link) {
-        float: left;
-        color: #f2f2f2;
-        text-align: center;
-        padding: 14px 16px;
-        text-decoration: none;
-        font-size: 17px;
-        display: flex;
-        align-items: center;
-    }
-
-    nav a:hover {
-        background-color: #fd963f;
-        color: black;
-    }
-
-    nav a.active {
-        background-color: #04AA6D;
-        color: white;
-    }
-
-    .nav-img {
-        height: 80px;
-        display: flex
-    }
-
-    .main-text {
-        padding-left: 10%;
-    }
-
-    .title {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: center;
-        padding: 40px;
-    }
-
-    .title img {
-        max-width: 350px;
-        border-radius: 10px;
-        margin-right: 40px;
-    }
-
-    .title-text {
-        max-width: 400px;
-        font-size: 24px;
-        font-weight: bold;
-    }
-
-    .section-title {
-        text-align: center;
-        margin: 50px 0 20px;
-        font-size: 28px;
-    }
-
-    .games-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, max-content));
-        justify-content: center;
-        gap: 30px;
-        padding: 0 40px 60px;
-    }
-
-    .game-card {
-        text-align: center;
-    }
-
-    .game-card img {
-        max-height: 170px;
-        max-width: 170px;
-        border-radius: 8px;
-    }
-
-    .img-div {
-        height: 170px;
-        width: 170px;
-        align-content: center;
-        justify-self: center;
-    }
-
-    .game-card h3 {
-        margin: 10px 0 5px;
-    }
-
-    .game-card p {
-        color: #555;
-        font-size: 14px;
-    }
-
-    .game-card span {
-        font-weight: bold;
-        color: #333;
-    }
-
-    .clickable-game {
-        text-decoration: none;
-        color: black;
-    }
-
-    .welcome-user {
-        color: #fd963f;
-        padding: 14px 16px;
-        font-size: 17px;
-        display: flex;
-        align-items: center;
-    }
-</style>

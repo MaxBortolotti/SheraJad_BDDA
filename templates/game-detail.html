@@ -15,7 +15,7 @@
         <a href="/">Accueil</a>
         <a href="/search-games">Jeux</a>
         {% if current_user.is_authenticated and current_user.is_admin %}
-        <a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
+        <a href="{{ url_for('admin_panler') }}">Admin Dashboard</a>
         {% endif %}
 
         {% if current_user.is_authenticated %}
