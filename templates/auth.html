@@ -18,6 +18,10 @@
         <a href="{{ url_for('logout') }}">Déconnexion</a>
     </nav>
 
+
+    <div class="main-text">
+        <h1>Page d'Authentification</h1>
+    </div>
     <div id="login-page" class="container">
         <h2>Connexion</h2>
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -38,9 +42,6 @@
             </div>
             <button type="submit" class="btn-login">Se connecter</button>
         </form>
-        <div class="main-text">
-            <h1>Page d'Authentification</h1>
-        </div>
 
 </body>
 
@@ -90,6 +91,12 @@
     }
 
     .main-text {
-        padding-left: 10%;
+        padding-left: 4vw;
+    }
+
+    #login-page {
+        padding-left: 4vw;
+        padding-right: 4vw;
+        padding-top: 2vh;
     }
 </style>
