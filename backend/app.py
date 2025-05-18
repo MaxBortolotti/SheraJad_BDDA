@@ -5,13 +5,11 @@ from sqlalchemy.sql import text
 from datetime import datetime
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
+
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
 
-#config pour lien Flask-BDD
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/sherajad'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-#config pour login
 app.secret_key = 'super secret key'
 app.config['SESSION_TYPE'] = 'filesystem'
 #sess.init_app(app)
@@ -22,7 +20,6 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
-
 # --- MODELS ---
 
 class Category(db.Model):
@@ -74,6 +71,12 @@ class User(db.Model):
     @property
     def is_active(self):
         return True
+    
+    @property
+    def is_authenticated(self):
+        return True
+    
+
 
 class Game(db.Model):
     __tablename__ = 'game'
@@ -98,6 +101,7 @@ class Game(db.Model):
     ratings = db.relationship('Rating', backref='game', lazy=True)
 
 
+
 class ConnGC(db.Model):
     __tablename__ = 'conngc'
     idG = db.Column(db.Integer, db.ForeignKey('game.id'), primary_key=True)
@@ -119,9 +123,7 @@ class ConnGP(db.Model):
 
 @app.route('/')
 def home():
-    games = Game.query.all()
-    Rgames = games[10:12]
-    Rgames.append(games[13])
+    Rgames = Game.query.order_by(Game.wishing.desc()).limit(6).all()
     return render_template('home.html', message="Bienvenue sur notre site de jeux!", games=Rgames)
 
 @app.route('/search-games', methods=['GET'])
@@ -158,22 +160,31 @@ def get_games():
 
     return render_template('search-games.html', games=games, sort_by=sort_by, lastname=lastname, message=message)
 
+@app.route('/auth')
+def auth_func():
+    return render_template('auth.html')
+
 @app.route('/game/<int:game_id>')
 def game_detail(game_id):
     game = Game.query.get_or_404(game_id)
-    return render_template('game-detail.html', game=game)
+    reviews = Review.query.join(Rating).filter(Rating.id == game.idRa).all()
+    return render_template('game-detail.html', game=game, reviews=reviews)
 
 @app.route('/ajout-avis', methods=['POST'])
 def ajoutavis():
-    if request.method == 'POST':
-        note = request.form['note']
-        description = request.form['description']
-        new_review = Review(userrating=note, message=description, idRa=Game.query.join(Rating).id ) #, idP=current_user.ID
-        db.session.add(new_review)
-        db.session.commit()
-        flash('Avis Ajouté !')
-        return redirect(url_for('login'))
-    return render_template('login.html')
+    game_id = request.form['game_id']
+    note = request.form['note']
+    description = request.form['description']
+
+    game = Game.query.get(game_id)
+    current_person = Person.query.filter_by(id=current_user.idP).first()
+
+    rating_id = game.idRa
+    new_review = Review(userrating=note, message=description, idRa=rating_id , idP=current_person.id)
+    db.session.add(new_review)
+    db.session.commit()
+    flash('Avis Ajouté !')
+    return redirect(url_for('game_detail', game_id=game_id))
 
 
 @app.route('/auth', methods=['GET', 'POST'])
@@ -202,6 +213,45 @@ def auth():
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id)) 
+
+
+@app.route('/logout')
+#@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        prenom = request.form['prenom']
+        nom = request.form['nom']
+        email = request.form['email']
+        password = request.form['password']
+
+        # Vérifiez si l'email existe déjà
+        if User.query.filter_by(email=email).first():
+            flash('Cette adresse e-mail est déjà utilisée.')
+            return render_template('register.html')
+
+        new_person = Person(lastname=nom, firstname=prenom)
+        db.session.add(new_person)
+        db.session.commit()
+        person = Person.query.filter_by(lastname=nom, firstname=prenom).first()
+        # Récupérer l'ID de la nouvelle personne
+        person_id = int(person.id)
+
+        query = f"INSERT INTO users (email, password, idP, creationdate) VALUES ('{email}', SHA2(CONCAT(NOW(), '{password}'), 224), {person_id}, NOW())"
+        result = db.session.execute(text(query))
+        db.session.commit()
+    
+
+        flash('Inscription réussie ! Vous pouvez maintenant vous connecter.')
+        return redirect(url_for('auth'))
+    return render_template('register.html')
+
 
 # --- MAIN ---
 

@@ -34,7 +34,7 @@ INSERT IGNORE INTO game (id, name, description, yearpublished, minplayers, maxpl
 (12, 'Carcassonne', 'Carcassonne is a tile-placement game where players draw and place a tile with a piece of southern French landscape on it.', 2000, 2, 5, 30, 30, 45, 7, 120000, 2000, 3000, 4000, 12),
 (13, 'Ticket to Ride', 'Ticket to Ride is a railway-themed board game where players collect and play matching train cards to claim railway routes.', 2004, 2, 5, 45, 30, 60, 8, 110000, 2000, 3000, 4000, 13),
 (14, 'Pandemic', 'Pandemic is a cooperative game where players work together to cure diseases that threaten to wipe out humanity.', 2008, 2, 4, 45, 45, 45, 8, 100000, 2000, 3000, 4000, 14),
-(15, 'Catan', 'Catan is a classic game of trading and building where players collect resources and use them to build settlements, cities, and roads on a variable game board.', 1995, 3, 4, 75, 60, 90, 10, 110000, 2000, 3000, 4000, 15);
+(15, 'Catan', 'Catan is a classic game of trading and building where players collect resources and use them to build settlements, cities, and roads on a variable game board.', 1995, 3, 4, 75, 60, 90, 10, 110000, 2000, 3000, 11000, 15);
 
 
 
@@ -182,7 +182,6 @@ INSERT IGNORE INTO review (id, userrating, message, idRa, idP) VALUES
 (11, 1.5, 'Very bad game.', 5, 7);
 
 INSERT IGNORE INTO users (id, email, password, creationdate, idP) VALUES (1, "user@example.com", SHA2(CONCAT(NOW(), "user"), 224), NOW(), 33);
-
 /*
 DELETE FROM users WHERE idP = 33;
 SELECT * FROM users;
@@ -207,3 +206,13 @@ SELECT * FROM users;
 #SELECT * FROM rating JOIN review ON rating.id = review.idRa;
 
 #SELECT * FROM person WHERE person.id = 33;
+
+
+/*
+SELECT * FROM person;
+SELECT * FROM users;
+
+DELETE FROM users WHERE email = "blacky@example.com";
+
+DELETE FROM person WHERE firstname = "blacky";
+*/

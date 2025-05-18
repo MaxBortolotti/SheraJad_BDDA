@@ -28,7 +28,7 @@
         <h1>Page d'Authentification</h1>
     </div>
     <div id="login-page" class="container">
-        <h2>Connexion</h2>
+        <h2>Inscription</h2>
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         {% for category, message in messages %}
@@ -36,17 +36,27 @@
         {% endfor %}
         {% endif %}
         {% endwith %}
-        <form method="POST" action="{{ url_for('auth') }}">
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="text" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Mot de passe </label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit" class="btn-login">Se connecter</button>
-        </form>
+        <div id="login-page" class="container">
+            <form method="POST" action="{{ url_for('register') }}">
+                <div class="form-group">
+                    <label for="prenom">Prenom </label>
+                    <input type="text" id="prenom" name="prenom" required>
+                </div>
+                <div class="form-group">
+                    <label for="nom">Nom </label>
+                    <input type="text" id="nom" name="nom" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email </label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe </label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn-login">S'inscrire</button>
+            </form>
+        </div>
 
 </body>
 

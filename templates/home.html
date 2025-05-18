@@ -14,7 +14,13 @@
                 src="{{ url_for('static', filename='images/LOGO.png') }}" alt="Sherajad-Logo" /></a>
         <a href="/">Accueil</a>
         <a href="/search-games">Jeux</a>
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('logout') }}">Déconnexion</a>
+        <span class="welcome-user">{{ current_user.person.firstname }}</span>
+        {% else %}
         <a href="/auth">Connexion</a>
+        <a href="/register">Créer un compte</a>
+        {% endif %}
     </nav>
 
 
@@ -27,7 +33,7 @@
     </section>
 
     <!-- Jeux du moments -->
-    <h2 class="section-title">Jeux du moment</h2>
+    <h2 class="section-title">Jeux les plus demandés</h2>
     <div class="games-grid">
         {% for game in games %}
         <a class="clickable-game" href="{{ url_for('game_detail', game_id=game.id) }}">
@@ -38,7 +44,12 @@
                 </div>
                 <h3>{{ game.name }}</h3>
                 <p>{{ game.description }}</p>
-                <span>{{ game.ratings.average }}/10</span>
+                <span>{{ game.ratings.average }}/10
+                    <br>
+                    {{game.wishing}}
+                    {% if game.wishing > 1 %} personnes le souhaitent {% else %} personne le souhaite {% endif %}
+                    </br>
+                </span>
             </div>
         </a>
         {% endfor %}
@@ -164,5 +175,13 @@
     .clickable-game {
         text-decoration: none;
         color: black;
+    }
+
+    .welcome-user {
+        color: #fd963f;
+        padding: 14px 16px;
+        font-size: 17px;
+        display: flex;
+        align-items: center;
     }
 </style>

@@ -14,7 +14,13 @@
                 src="{{ url_for('static', filename='images/LOGO.png') }}" alt="Sherajad-Logo" /></a>
         <a href="/">Accueil</a>
         <a href="/search-games">Jeux</a>
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('logout') }}">Déconnexion</a>
+        <span class="welcome-user">{{ current_user.person.firstname }}</span>
+        {% else %}
         <a href="/auth">Connexion</a>
+        <a href="/register">Créer un compte</a>
+        {% endif %}
     </nav>
 
     <div class="main-text">
@@ -46,22 +52,22 @@
 
 
 
-        <!-- Liste des jeux -->
-        <ul>
+        <ul class="game-list">
             {% for game in games %}
-            <li>
+            <li class="game-card">
                 <a class="clickable-game" href="{{ url_for('game_detail', game_id=game.id) }}">
-                    <strong>{{ game.name }}</strong> ({{ game.yearpublished }})
+                    <div class="game-header">
+                        <strong class="game-name">{{ game.name }}</strong>
+                        <span class="game-year">({{ game.yearpublished }})</span>
+                    </div>
                     {% if game.ratings and game.ratings.average %}
-                    [{{ game.ratings.average }}]
+                    <div class="game-rating">Note : <span class="rating-value">{{ game.ratings.average }}</span></div>
                     {% endif %}
                 </a>
             </li>
             {% endfor %}
         </ul>
 
-        <a href="/">Retour à l'accueil</a>
-    </div>
 
 </body>
 
@@ -119,6 +125,7 @@
         align-items: center;
         gap: 10px;
         margin-bottom: 20px;
+        margin: auto;
         padding: 15px 20px;
         width: fit-content;
         background-color: #f9f9f9;
@@ -174,5 +181,70 @@
     .clickable-game strong {
         color: #fd963f;
         font-size: 20px;
+    }
+
+    .game-list {
+        list-style: none;
+        padding: 0;
+        margin: 40px auto;
+        max-width: 800px;
+    }
+
+    .game-card {
+        margin-bottom: 15px;
+    }
+
+    .clickable-game {
+        display: block;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-decoration: none;
+        color: #333;
+        font-size: 18px;
+        transition: transform 0.2s, box-shadow 0.3s;
+    }
+
+    .clickable-game:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        background-color: #fef7f1;
+        color: #000;
+    }
+
+    .game-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .game-name {
+        color: #fd963f;
+        font-size: 20px;
+    }
+
+    .game-year {
+        font-size: 16px;
+        color: #666;
+    }
+
+    .game-rating {
+        font-size: 16px;
+        color: #444;
+    }
+
+    .rating-value {
+        font-weight: bold;
+        color: #04AA6D;
+    }
+
+    .welcome-user {
+        color: #fd963f;
+        padding: 14px 16px;
+        font-size: 17px;
+        display: flex;
+        align-items: center;
     }
 </style>
