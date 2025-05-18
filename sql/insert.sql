@@ -206,3 +206,13 @@ SELECT * FROM users;
 #SELECT * FROM rating JOIN review ON rating.id = review.idRa;
 
 #SELECT * FROM person WHERE person.id = 33;
+
+
+/*
+SELECT * FROM person;
+SELECT * FROM users;
+
+DELETE FROM users WHERE email = "blacky@example.com";
+
+DELETE FROM person WHERE firstname = "blacky";
+*/

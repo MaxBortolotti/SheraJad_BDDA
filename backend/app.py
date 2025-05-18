@@ -215,6 +215,38 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        prenom = request.form['prenom']
+        nom = request.form['nom']
+        email = request.form['email']
+        password = request.form['password']
+
+        # Vérifiez si l'email existe déjà
+        if User.query.filter_by(email=email).first():
+            flash('Cette adresse e-mail est déjà utilisée.')
+            return render_template('register.html')
+
+        new_person = Person(lastname=nom, firstname=prenom)
+        db.session.add(new_person)
+        db.session.commit()
+        person = Person.query.filter_by(lastname=nom, firstname=prenom).first()
+        # Récupérer l'ID de la nouvelle personne
+        person_id = int(person.id)
+
+        query = f"INSERT INTO users (email, password, idP, creationdate) VALUES ('{email}', SHA2(CONCAT(NOW(), '{password}'), 224), {person_id}, NOW())"
+        result = db.session.execute(text(query))
+        db.session.commit()
+    
+
+        flash('Inscription réussie ! Vous pouvez maintenant vous connecter.')
+        return redirect(url_for('auth'))
+    return render_template('register.html')
+
+
 # --- MAIN ---
 
 if __name__ == '__main__':
