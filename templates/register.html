@@ -3,123 +3,186 @@
 
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sherajad - Accueil</title>
+    <title>Sherajad - Inscription</title>
+    
 </head>
 
 <body>
 
     <!-- Barre de navigation -->
     <nav>
-        <a class="nav-img-link" href="/"><img class="nav-img" href="/"
-                src="{{ url_for('static', filename='images/LOGO.png') }}" alt="Sherajad-Logo" /></a>
+        <a class="nav-img-link" href="/">
+            <img class="nav-img"
+                 src="{{ url_for('static', filename='images/LOGO.png') }}"
+                 alt="Sherajad-Logo" />
+        </a>
         <a href="/">Accueil</a>
         <a href="/search-games">Jeux</a>
         {% if current_user.is_authenticated %}
-        <a href="{{ url_for('logout') }}">Déconnexion</a>
-        <span class="welcome-user">{{ current_user.person.firstname }}</span>
+            <a href="{{ url_for('logout') }}">Déconnexion</a>
+            <span class="welcome-user">{{ current_user.person.firstname }}</span>
         {% else %}
-        <a href="/auth">Connexion</a>
-        <a href="/register">Créer un compte</a>
+            <a href="/auth">Connexion</a>
+            <a href="/register">Créer un compte</a>
         {% endif %}
     </nav>
 
+    <!-- Conteneur du formulaire -->
+    <div class="container">
+        <h2>Créer un compte</h2>
 
-    <div class="main-text">
-        <h1>Page d'Authentification</h1>
-    </div>
-    <div id="login-page" class="container">
-        <h2>Inscription</h2>
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-        {% for category, message in messages %}
-        <div class="flash {{ category }}">{{ message }}</div>
-        {% endfor %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
         {% endif %}
         {% endwith %}
-        <div id="login-page" class="container">
-            <form method="POST" action="{{ url_for('register') }}">
-                <div class="form-group">
-                    <label for="prenom">Prenom </label>
-                    <input type="text" id="prenom" name="prenom" required>
-                </div>
-                <div class="form-group">
-                    <label for="nom">Nom </label>
-                    <input type="text" id="nom" name="nom" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email </label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Mot de passe </label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <button type="submit" class="btn-login">S'inscrire</button>
-            </form>
-        </div>
+
+        <form method="POST" action="{{ url_for('register') }}">
+            <div class="form-group">
+                <label for="prenom">Prénom</label>
+                <input type="text" id="prenom" name="prenom" required>
+            </div>
+            <div class="form-group">
+                <label for="nom">Nom</label>
+                <input type="text" id="nom" name="nom" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Adresse e-mail</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn-login">S'inscrire</button>
+        </form>
+    </div>
 
 </body>
 
-</html>
-
-
-
 <style>
-    body {
-        margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
-    }
+        /* Reset et typo de base */
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fafafa;
+            color: #333;
+        }
 
-    nav {
-        overflow: hidden;
-        background-color: #333;
-        display: flex;
-        justify-content: space-between;
-        padding-left: 30%;
-        padding-right: 30%;
-    }
+        /* Navigation */
+        nav {
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0.5rem 1rem;
+        }
+        nav a {
+            color: #f2f2f2;
+            text-decoration: none;
+            margin: 0 1rem;
+            font-size: 1rem;
+            transition: color .3s, background .3s;
+            padding: .5rem 1rem;
+            border-radius: 4px;
+        }
+        nav a:hover {
+            background-color: #fd963f;
+            color: #000;
+        }
+        
+        .nav-img {
+            height: 80px;
+            display: flex
+        }
 
-    nav a:not(.nav-img-link) {
-        float: left;
-        color: #f2f2f2;
-        text-align: center;
-        padding: 14px 16px;
-        text-decoration: none;
-        font-size: 17px;
-        display: flex;
-        align-items: center;
-    }
+        /* Conteneur central */
+        .container {
+            max-width: 400px;
+            margin: 2rem auto;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .container h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #444;
+        }
 
-    nav a:hover {
-        background-color: #fd963f;
-        color: black;
-    }
+        /* Formulaire */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: .5rem;
+            font-weight: 600;
+        }
+        .form-group input {
+            width: 100%;
+            padding: .75rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color .2s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #fd963f;
+        }
 
-    nav a.active {
-        background-color: #04AA6D;
-        color: white;
-    }
+        /* Bouton principal */
+        .btn-login {
+            display: block;
+            width: 100%;
+            padding: .85rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            background-color: #fd963f;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color .3s, transform .1s;
+        }
+        .btn-login:hover {
+            background-color: #e58530;
+            transform: translateY(-2px);
+        }
+        .btn-login:active {
+            transform: translateY(0);
+        }
 
-    .nav-img {
-        height: 80px;
-        display: flex
-    }
+        /* Flash messages */
+        .flash {
+            padding: .75rem 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-size: .95rem;
+        }
+        .flash.error {
+            background: #fdecea;
+            color: #b02a37;
+        }
+        .flash.success {
+            background: #e6ffed;
+            color: #2a7f37;
+        }
 
-    .main-text {
-        padding-left: 4vw;
-    }
+        /* Welcome user (dans le nav) */
+        .welcome-user {
+            color: #fd963f;
+            margin-left: 1rem;
+            font-weight: 600;
+        }
+    </style>
 
-    #login-page {
-        padding-left: 4vw;
-        padding-right: 4vw;
-        padding-top: 2vh;
-    }
-
-    .welcome-user {
-        color: #fd963f;
-        padding: 14px 16px;
-        font-size: 17px;
-        display: flex;
-        align-items: center;
-    }
-</style>
+</html>
