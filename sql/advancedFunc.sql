@@ -23,6 +23,7 @@ FROM game WHERE minplayers >= 4 AND maxplayers >= 4;
 
 -- CREATION DES INDEX
 
+
 -- suppression des anciens indexes pour les redéfinir plus bas
 DROP INDEX index_playing_time ON game;
 DROP INDEX index_min_playing_time ON game;
@@ -30,6 +31,7 @@ DROP INDEX index_max_playing_time ON game;
 DROP INDEX index_game_name ON game;
 DROP INDEX index_mechanic_name ON mechanic;
 DROP INDEX index_rating_average ON rating;
+
 
 CREATE INDEX index_playing_time on game(playingtime);
 CREATE INDEX index_min_playing_time on game(minplaytime);
@@ -60,8 +62,8 @@ FOR EACH ROW
 BEGIN 
     DECLARE user_rating DECIMAL(5,3);
     DECLARE avg_rating DECIMAL(5,3);
-    DECLARE total_usersrated DECIMAL(5,3);
-    DECLARE final_avg_rating DECIMAL(5,3);
+    DECLARE total_usersrated INT;
+    DECLARE final_avg_rating INT;
     
     -- On selectionne les variables que l'on va utiliser
     SELECT rating.usersrated INTO total_usersrated FROM rating WHERE rating.id = NEW.idRa;
@@ -69,7 +71,7 @@ BEGIN
     SELECT rating.average INTO avg_rating FROM rating WHERE rating.id = NEW.idRa;
     -- Puis, on calcule la nouvelle moyenne a partir de ces variables selectionnees
     SELECT ((avg_rating*total_usersrated + user_rating)/(total_usersrated+1)) INTO final_avg_rating;
-    UPDATE review SET review.average = final_avg_rating WHERE review.id = NEW.id;
+    UPDATE rating SET rating.average = final_avg_rating WHERE rating.id = NEW.id;
     -- Enfin, on incremente le nombre total d'avis du jeu
     UPDATE rating SET rating.usersrated = rating.usersrated + 1 WHERE rating.id = NEW.idRa;
     

@@ -44,7 +44,7 @@ CREATE TABLE person(
 );
 
 CREATE TABLE review(
-   id INT,
+   id INT AUTO_INCREMENT,
    userrating DECIMAL(5,3)  ,
    message VARCHAR(50) ,
    idRa INT NOT NULL,

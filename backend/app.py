@@ -104,6 +104,7 @@ class Game(db.Model):
     ratings = db.relationship('Rating', backref='game', lazy=True)
 
 
+
 class ConnGC(db.Model):
     __tablename__ = 'conngc'
     idG = db.Column(db.Integer, db.ForeignKey('game.id'), primary_key=True)
@@ -186,19 +187,24 @@ def auth_func():
 @app.route('/game/<int:game_id>')
 def game_detail(game_id):
     game = Game.query.get_or_404(game_id)
-    return render_template('game-detail.html', game=game)
+    reviews = Review.query.join(Rating).filter(Rating.id == game.idRa).all()
+    return render_template('game-detail.html', game=game, reviews=reviews)
 
 @app.route('/ajout-avis', methods=['POST'])
 def ajoutavis():
-    if request.method == 'POST':
-        note = request.form['note']
-        description = request.form['description']
-        new_review = Review(userrating=note, message=description, idRa=Game.query.join(Rating).id ) #, idP=current_user.ID
-        db.session.add(new_review)
-        db.session.commit()
-        flash('Avis Ajouté !')
-        return redirect(url_for('login'))
-    return render_template('login.html')
+    game_id = request.form['game_id']
+    note = request.form['note']
+    description = request.form['description']
+
+    game = Game.query.get(game_id)
+    current_person = Person.query.filter_by(id=current_user.idP).first()
+
+    rating_id = game.idRa
+    new_review = Review(userrating=note, message=description, idRa=rating_id , idP=current_person.id)
+    db.session.add(new_review)
+    db.session.commit()
+    flash('Avis Ajouté !')
+    return redirect(url_for('game_detail', game_id=game_id))
 
 
 @app.route('/auth', methods=['GET', 'POST'])

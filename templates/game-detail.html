@@ -65,18 +65,38 @@
                 </ul>
             </div>
 
+
+            {% if current_user.is_authenticated %}
             <div class="avis-user">
+                <h2>Votre Avis</h2>
                 <form method="POST" action="{{ url_for('ajoutavis') }}">
+                    <input type="hidden" name="game_id" value="{{ game.id }}">
                     <div class="form-group">
-                        <input name="note" type="number" placeholder="Votre note" step="0.5" required>
+                        <input name="note" type="number" placeholder="Votre note" step="0.5" max="10" required>
                     </div>
                     <div class="form-group">
-                        <input name="description" type="text" placeholder="Votre avis" maxlength="255" required>
+                        <textarea name="description" type="text" placeholder="Votre avis" maxlength="255"
+                            required></textarea>
                     </div>
                     <button type="submit" class="btn-login">Envoyer l'avis</button>
                 </form>
-                <a class="back-link" href="{{ url_for('get_games') }}">← Retour à la liste des jeux</a>
             </div>
+            {% endif %}
+
+            <!-- Section pour afficher les avis -->
+            <div class="reviews-section">
+                <h2>Avis des utilisateurs</h2>
+                {% for review in reviews %}
+                <div class="review">
+                    <p><strong>Note :</strong> {{ review.userrating }}</p>
+                    <p><strong>Avis :</strong> {{ review.message }}</p>
+                    <p><strong>Par :</strong> {{ review.person.firstname }} {{ review.person.lastname }}</p>
+                </div>
+                {% endfor %}
+            </div>
+
+
+            <a class="back-link" href="{{ url_for('get_games') }}">← Retour à la liste des jeux</a>
         </div>
 </body>
 
@@ -228,5 +248,88 @@
         font-size: 17px;
         display: flex;
         align-items: center;
+    }
+
+    .reviews-section {
+        margin-top: 30px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+    }
+
+    .reviews-section h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .review {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .review p {
+        margin: 10px 0;
+        color: #555;
+    }
+
+    .review strong {
+        color: #333;
+    }
+
+    .avis-user {
+        margin-top: 30px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .avis-user h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group input[type="number"],
+    .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    .form-group textarea {
+        height: 100px;
+        resize: vertical;
+    }
+
+    .btn-login {
+        background-color: #fd963f;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        display: block;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .btn-login:hover {
+        background-color: #e68a3d;
     }
 </style>
