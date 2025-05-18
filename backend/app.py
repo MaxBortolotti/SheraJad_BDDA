@@ -207,7 +207,7 @@ def auth():
                 flash('Utilisateur non trouvé.')
         else:
             flash('Identifiants invalides.')
-
+        return redirect(url_for('home'))
     return render_template('auth.html')
 
 @login_manager.user_loader
