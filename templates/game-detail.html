@@ -86,6 +86,7 @@
             </div>
             {% endif %}
 
+            {% if reviews != [] %}
             <!-- Section pour afficher les avis -->
             <div class="reviews-section">
                 <h2>Avis des utilisateurs</h2>
@@ -97,7 +98,7 @@
                 </div>
                 {% endfor %}
             </div>
-
+            {% endif %}
 
             <a class="back-link" href="{{ url_for('get_games') }}">← Retour à la liste des jeux</a>
         </div>
