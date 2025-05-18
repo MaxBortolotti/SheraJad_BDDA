@@ -63,6 +63,8 @@ class User(db.Model):
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(255))
     creationdate = db.Column(db.DateTime, default=datetime.utcnow)
+    is_admin = db.Column(db.Boolean, default=False)
+
     idP = db.Column(db.Integer, db.ForeignKey('person.id'), unique=True, nullable=False)
 
     def get_id(self):
@@ -246,6 +248,13 @@ def register():
         return redirect(url_for('auth'))
     return render_template('register.html')
 
+@app.route('/admin')
+@login_required
+def admin_dashboard():
+    if not current_user.is_admin:
+        flash("Accès refusé.")
+        return redirect(url_for('home'))
+    return render_template('admin.html')
 
 # --- MAIN ---
 
