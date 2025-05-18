@@ -168,7 +168,8 @@ def auth_func():
 def game_detail(game_id):
     game = Game.query.get_or_404(game_id)
     reviews = Review.query.join(Rating).filter(Rating.id == game.idRa).all()
-    return render_template('game-detail.html', game=game, reviews=reviews)
+    creators = Person.query.join(ConnGP).filter(ConnGP.idG == game_id).all()
+    return render_template('game-detail.html', game=game, reviews=reviews, creators=creators)
 
 @app.route('/ajout-avis', methods=['POST'])
 def ajoutavis():

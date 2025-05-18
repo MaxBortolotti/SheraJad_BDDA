@@ -46,6 +46,13 @@
             </div>
 
             <div class="list-group">
+                <p><strong>Créateur(s) :</strong></p>
+                <ul>
+                    {% for creator in creators %}
+                    <li>{{ creator.firstname }} {{ creator.lastname }}</li>
+                    {% endfor %}
+                </ul>
+
                 <p><strong>Catégories :</strong></p>
                 <ul>
                     {% for category in game.categories %}
