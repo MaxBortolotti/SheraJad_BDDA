@@ -14,9 +14,13 @@
                 src="{{ url_for('static', filename='images/LOGO.png') }}" alt="Sherajad-Logo" /></a>
         <a href="/">Accueil</a>
         <a href="/search-games">Jeux</a>
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('logout') }}">Déconnexion</a>
+        <span class="welcome-user">{{ current_user.person.firstname }}</span>
+        {% else %}
         <a href="/auth">Connexion</a>
         <a href="/register">Créer un compte</a>
-        <a href="{{ url_for('logout') }}">Déconnexion</a>
+        {% endif %}
     </nav>
 
     <div class="container">
@@ -212,5 +216,13 @@
 
     .back-link:hover {
         text-decoration: underline;
+    }
+
+    .welcome-user {
+        color: #fd963f;
+        padding: 14px 16px;
+        font-size: 17px;
+        display: flex;
+        align-items: center;
     }
 </style>
