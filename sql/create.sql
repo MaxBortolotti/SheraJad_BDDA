@@ -37,7 +37,7 @@ CREATE TABLE rating(
 );
 
 CREATE TABLE person(
-   id INT,
+   id INT AUTO_INCREMENT,
    firstname VARCHAR(50) ,
    lastname VARCHAR(50) ,
    PRIMARY KEY(id)
@@ -55,7 +55,7 @@ CREATE TABLE review(
 );
 
 CREATE TABLE users(
-   id INT,
+   id INT AUTO_INCREMENT,
    email VARCHAR(50) ,
    password VARCHAR(255) ,
    creationdate VARCHAR(255),

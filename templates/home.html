@@ -15,6 +15,7 @@
         <a href="/">Accueil</a>
         <a href="/search-games">Jeux</a>
         <a href="/auth">Connexion</a>
+        <a href="/register">Créer un compte</a>
         <a href="{{ url_for('logout') }}">Déconnexion</a>
     </nav>
 
@@ -41,8 +42,8 @@
                 <p>{{ game.description }}</p>
                 <span>{{ game.ratings.average }}/10
                     <br>
-                        {{game.wishing}}
-                        {% if game.wishing > 1 %} personnes le souhaitent {% else %} personne le souhaite {% endif %}
+                    {{game.wishing}}
+                    {% if game.wishing > 1 %} personnes le souhaitent {% else %} personne le souhaite {% endif %}
                     </br>
                 </span>
             </div>

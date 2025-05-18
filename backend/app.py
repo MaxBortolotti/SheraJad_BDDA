@@ -1,15 +1,25 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 
 from datetime import datetime
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+
 
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Amaziane47@localhost/sherajad'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = 'super secret key'
+app.config['SESSION_TYPE'] = 'filesystem'
+#sess.init_app(app)
 db = SQLAlchemy(app)
 
+
+#config flask_login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 # --- MODELS ---
 
 class Category(db.Model):
@@ -204,6 +214,38 @@ def load_user(user_id):
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        prenom = request.form['prenom']
+        nom = request.form['nom']
+        email = request.form['email']
+        password = request.form['password']
+
+        # Vérifiez si l'email existe déjà
+        if User.query.filter_by(email=email).first():
+            flash('Cette adresse e-mail est déjà utilisée.')
+            return render_template('register.html')
+
+        new_person = Person(lastname=nom, firstname=prenom)
+        db.session.add(new_person)
+        db.session.commit()
+        person = Person.query.filter_by(lastname=nom, firstname=prenom).first()
+        # Récupérer l'ID de la nouvelle personne
+        person_id = int(person.id)
+
+        query = f"INSERT INTO users (email, password, idP, creationdate) VALUES ('{email}', SHA2(CONCAT(NOW(), '{password}'), 224), {person_id}, NOW())"
+        result = db.session.execute(text(query))
+        db.session.commit()
+    
+
+        flash('Inscription réussie ! Vous pouvez maintenant vous connecter.')
+        return redirect(url_for('auth'))
+    return render_template('register.html')
+
 
 # --- MAIN ---
 

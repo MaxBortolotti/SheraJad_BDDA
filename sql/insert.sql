@@ -181,8 +181,7 @@ INSERT IGNORE INTO review (id, userrating, message, idRa, idP) VALUES
 (10, 9.0, 'Very immersive gameplay.', 10, 10),
 (11, 1.5, 'Very bad game.', 5, 7);
 
-INSERT IGNORE INTO users (email, password, creationdate, idP) VALUES ("user@example.com", SHA2(CONCAT(NOW(), "user"), 224), NOW(), 33);
-
+INSERT IGNORE INTO users (id, email, password, creationdate, idP) VALUES (1, "user@example.com", SHA2(CONCAT(NOW(), "user"), 224), NOW(), 33);
 /*
 DELETE FROM users WHERE idP = 33;
 SELECT * FROM users;
@@ -207,3 +206,13 @@ SELECT * FROM users;
 #SELECT * FROM rating JOIN review ON rating.id = review.idRa;
 
 #SELECT * FROM person WHERE person.id = 33;
+
+
+/*
+SELECT * FROM person;
+SELECT * FROM users;
+
+DELETE FROM users WHERE email = "blacky@example.com";
+
+DELETE FROM person WHERE firstname = "blacky";
+*/
