@@ -263,10 +263,18 @@ def dashboard_admin():
     if not current_user.admin:
         flash('Accès non autorisé.')
         return redirect(url_for('home'))
+    
+   
 
     users = User.query.all()
+
+    
     return render_template('dashboard_admin.html', users=users)
 
+#test
+
+
+#test
 @app.route('/admin/create-user', methods=['POST'])
 @login_required
 def create_user():

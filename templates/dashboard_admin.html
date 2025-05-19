@@ -37,7 +37,6 @@
             {% endif %}
             {% endwith %}
             <h3>Créer un nouvel utilisateur</h3>
-            <h3>Créer un nouvel utilisateur</h3>
             <form method="POST" action="{{ url_for('create_user') }}">
                 <div class="form-group">
                     <label for="new-prenom">Prénom :</label>
@@ -89,10 +88,74 @@
                 {% endfor %}
             </tbody>
         </table>
+
+
     </div>
     <footer>
-        <p>&copy; 2023 Projet GreunRunner. Tous droits réservés.</p>
+        <p>&copy; 2025 Projet Sherajad. Tous droits réservés.</p>
     </footer>
 </body>
 
+
 </html>
+
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    nav {
+        overflow: hidden;
+        background-color: #333;
+        display: flex;
+        justify-content: space-between;
+        padding-left: 30%;
+        padding-right: 30%;
+    }
+
+    nav a:not(.nav-img-link) {
+        float: left;
+        color: #f2f2f2;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 17px;
+        display: flex;
+        align-items: center;
+    }
+
+    nav a:hover {
+        background-color: #fd963f;
+        color: black;
+    }
+
+    nav a.active {
+        background-color: #04AA6D;
+        color: white;
+    }
+
+    .nav-img {
+        height: 80px;
+        display: flex
+    }
+
+    .main-text {
+        padding-left: 4vw;
+    }
+
+    #login-page {
+        padding-left: 4vw;
+        padding-right: 4vw;
+        padding-top: 2vh;
+    }
+
+    .welcome-user {
+        color: #fd963f;
+        padding: 14px 16px;
+        font-size: 17px;
+        display: flex;
+        align-items: center;
+    }
+</style>
