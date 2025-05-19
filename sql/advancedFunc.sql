@@ -23,7 +23,7 @@ FROM game WHERE minplayers >= 4 AND maxplayers >= 4;
 
 -- CREATION DES INDEX
 
-
+/*
 -- suppression des anciens indexes pour les redéfinir plus bas
 DROP INDEX index_playing_time ON game;
 DROP INDEX index_min_playing_time ON game;
@@ -31,7 +31,7 @@ DROP INDEX index_max_playing_time ON game;
 DROP INDEX index_game_name ON game;
 DROP INDEX index_mechanic_name ON mechanic;
 DROP INDEX index_rating_average ON rating;
-
+*/
 
 CREATE INDEX index_playing_time on game(playingtime);
 CREATE INDEX index_min_playing_time on game(minplaytime);

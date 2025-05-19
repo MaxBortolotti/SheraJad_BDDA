@@ -63,6 +63,7 @@ class User(db.Model):
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(255))
     creationdate = db.Column(db.DateTime, default=datetime.utcnow)
+    admin = db.Column(db.Boolean, default=False)
     idP = db.Column(db.Integer, db.ForeignKey('person.id'), unique=True, nullable=False)
 
     def get_id(self):
@@ -252,6 +253,72 @@ def register():
         flash('Inscription réussie ! Vous pouvez maintenant vous connecter.')
         return redirect(url_for('auth'))
     return render_template('register.html')
+
+#ADMIN DASHBORD
+@app.route('/dashboard_admin')
+@login_required
+def dashboard_admin():
+    # Vérifiez si l'utilisateur actuel est un admin
+    if not current_user.admin:
+        flash('Accès non autorisé.')
+        return redirect(url_for('home'))
+    
+    users = User.query.all()
+    
+    return render_template('dashboard_admin.html', users=users)
+
+@app.route('/admin/create-user', methods=['POST'])
+@login_required
+def create_user():
+    if not current_user.admin:
+        flash('Accès non autorisé.')
+        return redirect(url_for('home'))
+
+    prenom = request.form['prenom']
+    nom = request.form['nom']
+    email = request.form['email']
+    password = request.form['password']
+
+    # Vérifie si un utilisateur avec cet email existe déjà
+    if User.query.filter_by(email=email).first():
+        flash('Email déjà utilisé.')
+        return redirect(url_for('dashboard_admin'))
+
+    # Création de la personne
+    new_person = Person(lastname=nom, firstname=prenom)
+    db.session.add(new_person)
+    db.session.commit()
+    person = Person.query.filter_by(lastname=nom, firstname=prenom).first()
+    person_id = person.id
+
+    # Insertion dans la table users avec password haché dynamiquement
+    query = text("""
+        INSERT INTO users (email, password, idP, creationdate)
+        VALUES (:email, SHA2(CONCAT(NOW(), :password), 224), :idP, NOW())
+    """)
+    db.session.execute(query, {
+        'email': email,
+        'password': password,
+        'idP': person_id
+    })
+    db.session.commit()
+
+    flash('Utilisateur créé avec succès.')
+    return redirect(url_for('dashboard_admin'))
+
+@app.route('/admin/delete-user/<int:user_id>', methods=['POST'])
+@login_required
+def delete_user(user_id):
+    if not current_user.admin:
+        flash('Accès non autorisé.')
+        return redirect(url_for('home'))
+
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    flash('Utilisateur supprimé avec succès.')
+    return redirect(url_for('dashboard_admin'))
+
 
 
 # --- MAIN ---

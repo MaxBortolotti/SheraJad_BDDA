@@ -59,6 +59,7 @@ CREATE TABLE users(
    email VARCHAR(50) ,
    password VARCHAR(255) ,
    creationdate VARCHAR(255),
+   admin BOOL DEFAULT (False),
    idP INT NOT NULL,
    PRIMARY KEY(id),
    UNIQUE(idP),
