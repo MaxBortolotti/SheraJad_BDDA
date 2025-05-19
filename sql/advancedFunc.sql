@@ -157,3 +157,48 @@ END //
 DELIMITER ;
 
 CALL get_games_created_by_person(3); 
+
+DROP PROCEDURE IF EXISTS get_games_created_by_person;     -- <-- point-virgule manquant
+
+DELIMITER //
+
+CREATE PROCEDURE get_games_created_by_person(IN person_id INT)
+BEGIN
+  SELECT g.id, g.name
+    FROM game AS g
+    JOIN conngp AS cp ON cp.idG = g.id
+   WHERE cp.idP = person_id;
+END;
+//
+
+DELIMITER ;
+
+CALL get_games_created_by_person(3);
+
+
+-- 2) Créez la VIEW avec le délimiteur par défaut (;) ou terminez-la par $$
+CREATE OR REPLACE VIEW top_games_view AS
+SELECT
+  id,
+  name,
+  description,
+  wishing
+FROM game;    -- sous DELIMITER ;
+
+-- 3) Puis basculez en $$ pour la PROC
+DELIMITER $$
+CREATE PROCEDURE get_top_games(IN p_limit INT)
+BEGIN
+  SELECT
+    id,
+    name,
+    description,
+    wishing
+  FROM top_games_view
+  ORDER BY wishing DESC
+  LIMIT p_limit;
+END $$
+DELIMITER ;
+
+-- 4) Test
+CALL get_top_games(6);
