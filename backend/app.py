@@ -264,8 +264,9 @@ def dashboard_admin():
         return redirect(url_for('home'))
     
     users = User.query.all()
-    
-    return render_template('dashboard_admin.html', users=users)
+    reviews = Review.query.all()
+
+    return render_template('dashboard_admin.html', users=users, reviews=reviews)
 
 @app.route('/admin/create-user', methods=['POST'])
 @login_required
@@ -317,6 +318,19 @@ def delete_user(user_id):
     db.session.delete(user)
     db.session.commit()
     flash('Utilisateur supprimé avec succès.')
+    return redirect(url_for('dashboard_admin'))
+
+@app.route('/admin/delete-review/<int:review_id>', methods=['POST'])
+@login_required
+def delete_review(review_id):
+    if not current_user.admin:
+        flash('Accès non autorisé.')
+        return redirect(url_for('home'))
+
+    review = Review.query.get_or_404(review_id)
+    db.session.delete(review)
+    db.session.commit()
+    flash('Avis supprimé avec succès.')
     return redirect(url_for('dashboard_admin'))
 
 
